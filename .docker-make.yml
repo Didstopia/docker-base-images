@@ -1,0 +1,84 @@
+builds:
+
+  # Primary base images
+  ubuntu-14.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/14.04/Dockerfile
+    #pushes:
+    #  - "on_branch:master=didstopia/base:ubuntu-14.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Ubuntu."
+      - "org.label-schema.version=ubuntu-14.04"
+      - "org.label-schema.description=An always up to date base image for Ubuntu."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+  
+  ubuntu-16.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/16.04/Dockerfile
+    #pushes:
+    #  - "on_branch:master=didstopia/base:ubuntu-16.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Ubuntu."
+      - "org.label-schema.version=ubuntu-16.04"
+      - "org.label-schema.description=An always up to date base image for Ubuntu."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+  
+  alpine-3.5:
+    context: /
+    dockerfile: Dockerfiles/Alpine/3.5/Dockerfile
+    #pushes:
+    #  - "on_branch:master=didstopia/base:alpine-3.5"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Alpine."
+      - "org.label-schema.version=alpine-3.5"
+      - "org.label-schema.description=An always up to date base image for Alpine."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+
+  # Secondary base images
+  steamcmd-ubuntu-14.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/14.04/steamcmd/Dockerfile
+    rewrite_from: ubuntu-14.04
+    depends_on:
+      - ubuntu-14.04
+    #pushes:
+    #  - "on_branch:master=didstopia/base:steamcmd-ubuntu-14.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for steamcmd."
+      - "org.label-schema.version=steamcmd-ubuntu-14.04"
+      - "org.label-schema.description=An always up to date base image for steamcmd."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+  
+  steamcmd-ubuntu-16.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/14.04/steamcmd/Dockerfile
+    rewrite_from: ubuntu-16.04
+    depends_on:
+      - ubuntu-16.04
+    #pushes:
+    #  - "on_branch:master=didstopia/base:steamcmd-ubuntu-16.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for steamcmd."
+      - "org.label-schema.version=steamcmd-ubuntu-16.04"
+      - "org.label-schema.description=An always up to date base image for steamcmd."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"

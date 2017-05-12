@@ -1,0 +1,9 @@
+.git/
+.git*
+.docker-make.yml
+.travis.yml
+.DS_Store
+Thumbs.db
+.env
+Dockerfiles/
+data/
