@@ -9,7 +9,17 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     nodejs \
+    jq \
     build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-ENV NODE_ENV production
+COPY Scripts/nodejs_init.sh /init.sh
+
+RUN chmod +x /init.sh && \
+    mkdir -p /app
+
+VOLUME /app
+
+EXPOSE 3000
+
+ENTRYPOINT bash /init.sh
