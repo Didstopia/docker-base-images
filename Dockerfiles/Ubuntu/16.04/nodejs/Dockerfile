@@ -4,7 +4,7 @@ MAINTAINER Didstopia <support@didstopia.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x \
+RUN curl -sL https://deb.nodesource.com/setup_8.x \
     | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
