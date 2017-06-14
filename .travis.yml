@@ -1,0 +1,22 @@
+# Run as root
+sudo: required
+
+# No specific environment necessary
+language: generic
+
+# Install Docker support
+services:
+  - docker
+
+# Prepare the environment
+before_script:
+  - .travis/setup.sh
+
+# Build, test and push the new images
+script:
+  - .travis/update_check.sh
+
+# Don't build tags to avoid recursion
+branches:
+  except:
+    - /^[0-9]/

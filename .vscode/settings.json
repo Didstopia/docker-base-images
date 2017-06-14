@@ -1,6 +1,6 @@
 {
     "workbench.colorTheme": "Oceanic_Next",
-    "workbench.iconTheme": "flatland-icon-theme",
+    "workbench.iconTheme": "material-icon-theme",
     "extensions.autoUpdate": true,
     "editor.wordWrap": "on",
     "files.autoSave": "afterDelay"
