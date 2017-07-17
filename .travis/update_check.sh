@@ -26,7 +26,7 @@ then
     echo ""
     UPDATE_UBUNTU_14_04=1
 else
-	echo -n "No change."
+	echo -n "No changes."
 	echo ""
 fi
 
@@ -39,7 +39,7 @@ then
     echo ""
     UPDATE_UBUNTU_16_04=1
 else
-	echo -n "No change."
+	echo -n "No changes."
 	echo ""
 fi
 
@@ -52,7 +52,7 @@ then
     echo ""
     UPDATE_ALPINE_3_5=1
 else
-	echo -n "No change."
+	echo -n "No changes."
 	echo ""
 fi
 
