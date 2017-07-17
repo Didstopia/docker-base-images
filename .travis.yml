@@ -10,13 +10,16 @@ services:
 
 # Prepare the environment
 before_script:
-  - .travis/setup.sh
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then .travis/setup.sh; fi'
 
-# Build, test and push the new images
+# Build, test and push the new images, with PR specific logic
 script:
-  - .travis/update_check.sh
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then source .travis/update_check.sh; fi'
+  - .travis/build.sh
+  - .travis/test.sh
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then .travis/push.sh; fi'
 
-# Don't build tags to avoid recursion
+# Only build the master branch
 branches:
-  except:
-    - /^[0-9]/
+  only:
+  - master
