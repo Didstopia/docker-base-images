@@ -7,6 +7,8 @@ set -o pipefail
 # Switch to root
 cd "${0%/*}/../"
 
+echo ""
+
 # Check if this is not pull request
 if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     # Setup the repo for deployment
@@ -25,8 +27,6 @@ if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
         echo ""
     fi
 fi
-
-echo ""
 
 ## Remove dangling images, just in case
 echo -n "Removing dangling images.."

@@ -9,6 +9,7 @@ cd "${0%/*}/../"
 
 # Check if this is a pull request
 if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+    echo ""
     echo "NOTICE: Pull request detected, building all images.."
 fi
 

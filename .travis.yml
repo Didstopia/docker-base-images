@@ -17,27 +17,27 @@ env:
 # Setup caching
 cache:
   directories:
-  - $DOCKER_CACHE_DIR
+    - $DOCKER_CACHE_DIR
 
-# Load cached data
+# Load cached data and prepare the environment
 before_install:
   - if [ -f ${DOCKER_CACHE_BASE_FILE} ]; then ls -sh ${DOCKER_CACHE_BASE_FILE}; gunzip -c ${DOCKER_CACHE_BASE_FILE} | docker load; fi
+  - pwd && ls && .travis/setup.sh
+  - pwd && ls && source .travis/update_check.sh
 
-# Prepare the environment
-before_script:
-  - .travis/setup.sh
-  - source .travis/update_check.sh
-
-# Build, test and push the new images
-script:
-  - .travis/build.sh
-  - .travis/test.sh
-  - .travis/push.sh
+# Build the images
+install:
+  - pwd && ls && .travis/build.sh
 
 # Cache images
-after_script:
+after_install:
   - if [ ! -d ${DOCKER_CACHE_DIR} ]; then mkdir -p ${DOCKER_CACHE_DIR}; fi
   - if [ ! -f ${DOCKER_CACHE_BASE_FILE} ]; then docker save didstopia/base | gzip > ${DOCKER_CACHE_BASE_FILE}; ls -sh ${DOCKER_CACHE_BASE_FILE}; fi
+
+# Test and push the images if necessary
+script:
+  - pwd && ls && .travis/test.sh
+  - pwd && ls && .travis/push.sh
 
 # Only build specific branches
 branches:
