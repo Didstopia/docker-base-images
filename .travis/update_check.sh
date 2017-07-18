@@ -7,17 +7,14 @@ set -o pipefail
 # Switch to root
 cd "${0%/*}/../"
 
-# Check if we're running in Travis
-if [ "$TRAVIS" = "true" ]; then
-    # Check if this is a pull request
-    if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
-        # Mark all images as needing an update
-        echo "NOTICE: Pull request detected, skipping update check.."
-        export UPDATE_UBUNTU_14_04=1
-        export UPDATE_UBUNTU_16_04=1
-        export UPDATE_ALPINE_3_5=1
-        exit 0
-    fi
+# Check if this is a pull request
+if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+    # Mark all images as needing an update
+    echo "NOTICE: Pull request detected, skipping update check.."
+    export UPDATE_UBUNTU_14_04=1
+    export UPDATE_UBUNTU_16_04=1
+    export UPDATE_ALPINE_3_5=1
+    exit 0
 fi
 
 # Environment variables exported at the end of the script

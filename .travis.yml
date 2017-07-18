@@ -12,6 +12,8 @@ services:
 before_script:
   - .travis/setup.sh
 
+## FIXME: The "source" part seems to be messing everything up,
+##        not sure what we can do about it though
 # Build, test and push the new images, with PR specific logic
 script:
   - cd .travis && source update_check.sh

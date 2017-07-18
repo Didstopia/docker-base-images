@@ -7,12 +7,9 @@ set -o pipefail
 # Switch to root
 cd "${0%/*}/../"
 
-# Check if we're running in Travis
-if [ "$TRAVIS" = "true" ]; then
-    # Check if this is a pull request
-    if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
-        echo "NOTICE: Pull request detected, building all images.."
-    fi
+# Check if this is a pull request
+if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+    echo "NOTICE: Pull request detected, building all images.."
 fi
 
 # Build the images
