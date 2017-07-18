@@ -15,7 +15,7 @@ fi
 echo ""
 
 # Check if this is not pull request
-if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     # Setup the repo for deployment
     if [[ ! -z "${GITHUB_REPO}" ]]; then
         echo "Setting up git.."

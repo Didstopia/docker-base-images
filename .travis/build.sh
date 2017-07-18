@@ -13,7 +13,7 @@ else
 fi
 
 # Check if this is a pull request
-if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
     echo ""
     echo "NOTICE: Pull request detected, building all images.."
     ## TODO: Enable the rest of these

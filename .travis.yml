@@ -32,7 +32,7 @@ install:
 # Cache images
 after_install:
   - if [ ! -d ${DOCKER_CACHE_DIR} ]; then mkdir -p ${DOCKER_CACHE_DIR}; fi
-  - if [ ! -f ${DOCKER_CACHE_BASE_FILE} ]; then docker save didstopia/base | gzip > ${DOCKER_CACHE_BASE_FILE}; ls -sh ${DOCKER_CACHE_BASE_FILE}; fi
+  - if [ ! -f ${DOCKER_CACHE_BASE_FILE} ]; then docker save didstopia/base jizhilong/docker-make | gzip > ${DOCKER_CACHE_BASE_FILE}; ls -sh ${DOCKER_CACHE_BASE_FILE}; fi
 
 # Test and push the images if necessary
 script:

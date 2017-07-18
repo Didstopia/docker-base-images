@@ -13,7 +13,7 @@ else
 fi
 
 # Check if this is a pull request
-if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
     # Mark all images as needing an update
     echo "NOTICE: Pull request detected, skipping update check.."
     exit 0
