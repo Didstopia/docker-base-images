@@ -10,7 +10,7 @@ services:
 
 # Prepare the environment
 before_script:
-  - .travis/setup.sh; fi
+  - .travis/setup.sh
 
 # Build, test and push the new images, with PR specific logic
 script:
@@ -23,3 +23,4 @@ script:
 branches:
   only:
   - master
+  - development
