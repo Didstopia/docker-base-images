@@ -4,7 +4,9 @@ MAINTAINER Didstopia <support@didstopia.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN curl -sL https://deb.nodesource.com/setup_8.x \
+RUN groupadd --gid 1000 node && \
+    useradd --uid 1000 --gid node --shell /bin/bash --create-home node && \
+    curl -sL https://deb.nodesource.com/setup_6.x \
     | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -19,6 +21,8 @@ RUN chmod +x /init.sh && \
     mkdir -p /app
 
 VOLUME /app
+
+USER node
 
 EXPOSE 3000
 

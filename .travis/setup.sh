@@ -4,25 +4,33 @@
 set -e
 set -o pipefail
 
-# Switch to root
-cd "${0%/*}/../"
+# Switch to Travis build directory (if available)
+if [[ ! -z "${TRAVIS_BUILD_DIR}" ]]; then
+    cd "${TRAVIS_BUILD_DIR}"
+# Otherwise switch to root
+else
+    cd "${0%/*}/../"
+fi
 
 echo ""
 
-# Setup the repo for deployment
-if [[ ! -z "${GITHUB_REPO}" ]]; then
-    echo "Setting up git.."
-    git remote set-url origin $GITHUB_REPO > /dev/null
-    git config --global user.email "builds@travis-ci.com" > /dev/null
-    git config --global user.name "Travis CI" > /dev/null
-    echo ""
-fi
-
-# Login to Docker Hub
-if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
-    echo "Logging in to Docker Hub.."
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
-    echo ""
+# Check if this is not pull request and is on the master branch
+if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" = "false" && ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" = "master" ]]; then
+    # Setup the repo for deployment
+    if [[ ! -z "${GITHUB_REPO}" ]]; then
+        echo "Setting up git.."
+        git remote set-url origin $GITHUB_REPO > /dev/null
+        git config --global user.email "builds@travis-ci.com" > /dev/null
+        git config --global user.name "Travis CI" > /dev/null
+        echo ""
+    fi
+    
+    # Login to Docker Hub
+    if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
+        echo "Logging in to Docker Hub.."
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
+        echo ""
+    fi
 fi
 
 ## Remove dangling images, just in case
@@ -86,6 +94,18 @@ echo -n "    > nodejs-alpine-3.5.. "
 docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
 echo -n "done"
 echo ""
+
+# Utilities
+echo ""
+echo "  * Utilities"
+echo -n "    > docker-make.. "
+docker pull jizhilong/docker-make > /dev/null > /dev/null
+echo -n "done"
+echo ""
+
+# Disable error handling (useful when running with "source")
+set +e
+set +o pipefail
 
 echo ""
 echo "Setup completed successfully."

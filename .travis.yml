@@ -9,17 +9,21 @@ services:
   - docker
 
 # Prepare the environment
-before_script:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then .travis/setup.sh; fi'
+before_install:
+  - .travis/setup.sh
+  - source .travis/update_check.sh
 
-# Build, test and push the new images, with PR specific logic
-script:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then source .travis/update_check.sh; fi'
+# Build the images
+install:
   - .travis/build.sh
-  - .travis/test.sh
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then .travis/push.sh; fi'
 
-# Only build the master branch
+# Test and push the images if necessary
+script:
+  - .travis/test.sh
+  - .travis/push.sh
+
+# Only build specific branches
 branches:
   only:
-  - master
+    - master
+    - development
