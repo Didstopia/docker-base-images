@@ -17,6 +17,12 @@ if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; t
     echo ""
     echo "NOTICE: Pull request detected, skipping push.."
     echo ""
+# Check if this is a branch other than master
+elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
+    echo ""
+    echo "NOTICE: Branch is not 'master', skipping push.."
+    echo ""
+# Otherwise continue building/pushing the images
 else
     # Build the images
     echo ""

@@ -14,8 +14,8 @@ fi
 
 echo ""
 
-# Check if this is not pull request
-if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" = "false" ]]; then
+# Check if this is not pull request and is on the master branch
+if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" = "false" && ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" = "master" ]]; then
     # Setup the repo for deployment
     if [[ ! -z "${GITHUB_REPO}" ]]; then
         echo "Setting up git.."
