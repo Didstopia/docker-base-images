@@ -13,7 +13,7 @@ else
 fi
 
 # Check if this is a pull request
-if [[ -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
+if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
     echo ""
     echo "NOTICE: Pull request detected, skipping update check.."
     echo ""
