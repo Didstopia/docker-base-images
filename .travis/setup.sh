@@ -12,13 +12,10 @@ else
     cd "${0%/*}/../"
 fi
 
-echo "printenv:"
-printenv
-
 echo ""
 
 # Check if this is not pull request
-if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+if [[ -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" = "false" ]]; then
     # Setup the repo for deployment
     if [[ ! -z "${GITHUB_REPO}" ]]; then
         echo "Setting up git.."
