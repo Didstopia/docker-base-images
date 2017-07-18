@@ -95,6 +95,14 @@ docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
 echo -n "done"
 echo ""
 
+# Utilities
+echo ""
+echo "  * Utilities"
+echo -n "    > docker-make.. "
+docker pull jizhilong/docker-make > /dev/null > /dev/null
+echo -n "done"
+echo ""
+
 # Disable error handling (useful when running with "source")
 set +e
 set +o pipefail

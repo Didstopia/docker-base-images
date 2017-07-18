@@ -16,6 +16,10 @@ fi
 if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
     echo ""
     echo "NOTICE: Pull request detected, building all images.."
+    ## TODO: Enable the rest of these
+    UPDATE_UBUNTU_16_04=1
+    UPDATE_UBUNTU_14_04=0
+    UPDATE_ALPINE_3_5=0
 fi
 
 # Build the images
@@ -27,9 +31,10 @@ echo "Building images.."
 echo ""
 echo "  * Ubuntu 14.04"
 if [ "$UPDATE_UBUNTU_14_04" == "1" ]; then
-    echo -n "    > Building.. "
-    eval $(./docker-make.sh --no-push -f .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
-    echo -n "done!"
+    #echo -n "    > Building.. "
+    echo ""
+    eval $(./docker-make.sh --no-push --detailed -f .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
+    #echo -n "done!"
 else
     echo -n "    > No build necessary, skipping.."
 fi
@@ -38,9 +43,10 @@ echo ""
 echo ""
 echo "  * Ubuntu 16.04"
 if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
-    echo -n "    > Building.. "
-    eval $(./docker-make.sh --no-push -f .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
-    echo -n "done!"
+    #echo -n "    > Building.. "
+    echo ""
+    eval $(./docker-make.sh --no-push --detailed -f .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
+    #echo -n "done!"
 else
     echo -n "    > No build necessary, skipping.."
 fi
@@ -49,9 +55,10 @@ echo ""
 echo ""
 echo "  * Alpine 3.5"
 if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
-    echo -n "    > Building.. "
-    eval $(./docker-make.sh --no-push -f .docker-make.alpine-3-5.yml) >/dev/null 2>&1
-    echo -n "done!"
+    #echo -n "    > Building.. "
+    echo ""
+    eval $(./docker-make.sh --no-push --detailed -f .docker-make.alpine-3-5.yml) >/dev/null 2>&1
+    #echo -n "done!"
 else
     echo -n "    > No build necessary, skipping.."
 fi

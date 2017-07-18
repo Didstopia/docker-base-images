@@ -16,9 +16,6 @@ fi
 if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
     # Mark all images as needing an update
     echo "NOTICE: Pull request detected, skipping update check.."
-    export UPDATE_UBUNTU_14_04=1
-    export UPDATE_UBUNTU_16_04=1
-    export UPDATE_ALPINE_3_5=1
     exit 0
 fi
 
