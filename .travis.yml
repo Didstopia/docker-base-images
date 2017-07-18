@@ -22,12 +22,12 @@ cache:
 # Load cached data and prepare the environment
 before_install:
   - if [ -f ${DOCKER_CACHE_BASE_FILE} ]; then ls -sh ${DOCKER_CACHE_BASE_FILE}; gunzip -c ${DOCKER_CACHE_BASE_FILE} | docker load; fi
-  - pwd && ls && .travis/setup.sh
-  - pwd && ls && source .travis/update_check.sh
+  - echo "Current directory: $(pwd)" && echo "Contents:" && ls && .travis/setup.sh
+  - echo "Current directory: $(pwd)" && echo "Contents:" && ls && source .travis/update_check.sh
 
 # Build the images
 install:
-  - pwd && ls && .travis/build.sh
+  - echo "Current directory: $(pwd)" && echo "Contents:" && ls && .travis/build.sh
 
 # Cache images
 after_install:
@@ -36,8 +36,8 @@ after_install:
 
 # Test and push the images if necessary
 script:
-  - pwd && ls && .travis/test.sh
-  - pwd && ls && .travis/push.sh
+  - echo "Current directory: $(pwd)" && echo "Contents:" && ls && .travis/test.sh
+  - echo "Current directory: $(pwd)" && echo "Contents:" && ls && .travis/push.sh
 
 # Only build specific branches
 branches:
