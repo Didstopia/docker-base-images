@@ -17,6 +17,11 @@ if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; t
     echo ""
     echo "NOTICE: Pull request detected, skipping update check.."
     echo ""
+elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
+    echo ""
+    echo "NOTICE: Branch is not 'master', skipping update check.."
+    echo ""
+fi
 else
     # Environment variables exported at the end of the script
     UPDATE_UBUNTU_16_04=0

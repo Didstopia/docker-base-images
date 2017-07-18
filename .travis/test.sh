@@ -19,6 +19,12 @@ if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; t
     UPDATE_UBUNTU_16_04=1
     UPDATE_UBUNTU_14_04=1
     UPDATE_ALPINE_3_5=1
+elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
+    echo ""
+    echo "NOTICE: Branch is not 'master', testing all images.."
+    UPDATE_UBUNTU_16_04=1
+    UPDATE_UBUNTU_14_04=1
+    UPDATE_ALPINE_3_5=1
 fi
 
 # Environment variables
