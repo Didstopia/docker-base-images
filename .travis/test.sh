@@ -79,6 +79,10 @@ if [ "$TEST_SUCCESS" == "0" ]; then
     exit 1
 fi
 
+# Disable error handling (useful when running with "source")
+set +e
+set +o pipefail
+
 echo ""
 echo "Tests completed successfully."
 echo ""

@@ -77,6 +77,10 @@ export UPDATE_ALPINE_3_5
 echo -n "done"
 echo ""
 
+# Disable error handling (useful when running with "source")
+set +e
+set +o pipefail
+
 echo ""
 echo "Update check completed successfully."
 echo ""

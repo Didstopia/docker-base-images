@@ -54,6 +54,10 @@ else
 fi
 echo ""
 
+# Disable error handling (useful when running with "source")
+set +e
+set +o pipefail
+
 echo ""
 echo "Build completed successfully."
 echo ""

@@ -93,6 +93,10 @@ docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
 echo -n "done"
 echo ""
 
+# Disable error handling (useful when running with "source")
+set +e
+set +o pipefail
+
 echo ""
 echo "Setup completed successfully."
 echo ""
