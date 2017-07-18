@@ -8,21 +8,39 @@ language: generic
 services:
   - docker
 
+# Setup global environment variables
+env:
+  global:
+    - DOCKER_CACHE_DIR=$HOME/.cache/docker
+    - DOCKER_CACHE_BASE_FILE=$DOCKER_CACHE_DIR/base.tar.gz
+
+# Setup caching
+cache:
+  directories:
+  - $DOCKER_CACHE_DIR
+
+# Load cached data
+before_install:
+  - if [ -f ${DOCKER_CACHE_BASE_FILE} ]; then ls -sh ${DOCKER_CACHE_BASE_FILE}; gunzip -c ${DOCKER_CACHE_BASE_FILE} | docker load; fi
+
 # Prepare the environment
 before_script:
   - .travis/setup.sh
+  - source .travis/update_check.sh
 
-## FIXME: The "source" part seems to be messing everything up,
-##        not sure what we can do about it though
-# Build, test and push the new images, with PR specific logic
+# Build, test and push the new images
 script:
-  - cd .travis && source update_check.sh
   - .travis/build.sh
   - .travis/test.sh
   - .travis/push.sh
 
-# Only build the master branch
+# Cache images
+after_script:
+  - if [ ! -d ${DOCKER_CACHE_DIR} ]; then mkdir -p ${DOCKER_CACHE_DIR}; fi
+  - if [ ! -f ${DOCKER_CACHE_BASE_FILE} ]; then docker save didstopia/base | gzip > ${DOCKER_CACHE_BASE_FILE}; ls -sh ${DOCKER_CACHE_BASE_FILE}; fi
+
+# Only build specific branches
 branches:
   only:
-  - master
-  - development
+    - master
+    - development
