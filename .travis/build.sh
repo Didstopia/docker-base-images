@@ -16,10 +16,9 @@ fi
 if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
     echo ""
     echo "NOTICE: Pull request detected, building all images.."
-    ## TODO: Enable the rest of these
     UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_14_04=0
-    UPDATE_ALPINE_3_5=0
+    UPDATE_UBUNTU_14_04=1
+    UPDATE_ALPINE_3_5=1
 fi
 
 # Build the images
