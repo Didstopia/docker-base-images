@@ -8,30 +8,14 @@ language: generic
 services:
   - docker
 
-# Setup global environment variables
-env:
-  global:
-    - DOCKER_CACHE_DIR=$HOME/.cache/docker
-    - DOCKER_CACHE_BASE_FILE=$DOCKER_CACHE_DIR/base.tar.gz
-
-# Setup caching
-cache:
-  directories:
-    - $DOCKER_CACHE_DIR
-
-# Load cached data and prepare the environment
+# Prepare the environment
 before_install:
-  - if [ -f ${DOCKER_CACHE_BASE_FILE} ]; then ls -sh ${DOCKER_CACHE_BASE_FILE}; gunzip -c ${DOCKER_CACHE_BASE_FILE} | docker load; fi
   - .travis/setup.sh
   - source .travis/update_check.sh
 
 # Build the images
 install:
   - .travis/build.sh
-
-# Cache images
-before_script:
-  - docker save didstopia/base jizhilong/docker-make | gzip > ${DOCKER_CACHE_BASE_FILE}; ls -sh ${DOCKER_CACHE_BASE_FILE}
 
 # Test and push the images if necessary
 script:
@@ -42,4 +26,4 @@ script:
 branches:
   only:
     - master
-    #- development
+    - development
