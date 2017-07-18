@@ -10,14 +10,14 @@ services:
 
 # Prepare the environment
 before_script:
-  - bash .travis/setup.sh
+  - .travis/setup.sh
 
 # Build, test and push the new images, with PR specific logic
 script:
-  - source .travis/update_check.sh
-  - bash .travis/build.sh
-  - bash .travis/test.sh
-  - bash .travis/push.sh
+  - cd .travis && source update_check.sh
+  - .travis/build.sh
+  - .travis/test.sh
+  - .travis/push.sh
 
 # Only build the master branch
 branches:
