@@ -12,8 +12,11 @@ else
     cd "${0%/*}/../"
 fi
 
+echo "printenv:"
+printenv
+
 # Check if this is a pull request
-if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
+if [ "${TRAVIS_PULL_REQUEST}" = "true" ]; then
     echo ""
     echo "NOTICE: Pull request detected, testing all images.."
     UPDATE_UBUNTU_16_04=1

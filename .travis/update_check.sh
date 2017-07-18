@@ -12,10 +12,14 @@ else
     cd "${0%/*}/../"
 fi
 
+echo "printenv:"
+printenv
+
 # Check if this is a pull request
-if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
-    # Mark all images as needing an update
+if [ "${TRAVIS_PULL_REQUEST}" = "true" ]; then
+    echo ""
     echo "NOTICE: Pull request detected, skipping update check.."
+    echo ""
     exit 0
 fi
 
