@@ -30,8 +30,7 @@ install:
   - .travis/build.sh
 
 # Cache images
-after_install:
-  - if [ ! -d ${DOCKER_CACHE_DIR} ]; then mkdir -p ${DOCKER_CACHE_DIR}; fi
+before_script:
   - docker save didstopia/base jizhilong/docker-make | gzip > ${DOCKER_CACHE_BASE_FILE}; ls -sh ${DOCKER_CACHE_BASE_FILE}
 
 # Test and push the images if necessary
