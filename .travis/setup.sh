@@ -7,23 +7,29 @@ set -o pipefail
 # Switch to root
 cd "${0%/*}/../"
 
+# Check if we're running in Travis
+if [ "$TRAVIS" = "true" ]; then
+    # Check if this is not pull request
+    if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+        # Setup the repo for deployment
+        if [[ ! -z "${GITHUB_REPO}" ]]; then
+            echo "Setting up git.."
+            git remote set-url origin $GITHUB_REPO > /dev/null
+            git config --global user.email "builds@travis-ci.com" > /dev/null
+            git config --global user.name "Travis CI" > /dev/null
+            echo ""
+        fi
+        
+        # Login to Docker Hub
+        if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
+            echo "Logging in to Docker Hub.."
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
+            echo ""
+        fi
+    fi
+fi
+
 echo ""
-
-# Setup the repo for deployment
-if [[ ! -z "${GITHUB_REPO}" ]]; then
-    echo "Setting up git.."
-    git remote set-url origin $GITHUB_REPO > /dev/null
-    git config --global user.email "builds@travis-ci.com" > /dev/null
-    git config --global user.name "Travis CI" > /dev/null
-    echo ""
-fi
-
-# Login to Docker Hub
-if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
-    echo "Logging in to Docker Hub.."
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
-    echo ""
-fi
 
 ## Remove dangling images, just in case
 echo -n "Removing dangling images.."

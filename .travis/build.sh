@@ -7,6 +7,14 @@ set -o pipefail
 # Switch to root
 cd "${0%/*}/../"
 
+# Check if we're running in Travis
+if [ "$TRAVIS" = "true" ]; then
+    # Check if this is a pull request
+    if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+        echo "NOTICE: Pull request detected, building all images.."
+    fi
+fi
+
 # Build the images
 echo ""
 echo "Building images.."
@@ -20,7 +28,7 @@ if [ "$UPDATE_UBUNTU_14_04" == "1" ]; then
     eval $(./docker-make.sh --no-push -f .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
     echo -n "done!"
 else
-    echo -n "    > No update necessary, skipping.."
+    echo -n "    > No build necessary, skipping.."
 fi
 echo ""
 
@@ -31,7 +39,7 @@ if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
     eval $(./docker-make.sh --no-push -f .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
     echo -n "done!"
 else
-    echo -n "    > No update necessary, skipping.."
+    echo -n "    > No build necessary, skipping.."
 fi
 echo ""
 
@@ -42,7 +50,7 @@ if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
     eval $(./docker-make.sh --no-push -f .docker-make.alpine-3-5.yml) >/dev/null 2>&1
     echo -n "done!"
 else
-    echo -n "    > No update necessary, skipping.."
+    echo -n "    > No build necessary, skipping.."
 fi
 echo ""
 
