@@ -1,5 +1,5 @@
 # Base image
-FROM didstopia/base:ubuntu-16.04
+FROM didstopia/base:ubuntu-14.04
 
 # Maintainer information
 MAINTAINER Didstopia <support@didstopia.com>
@@ -16,7 +16,7 @@ RUN apt-get update && \
     rm -rf \
         /var/lib/apt/lists/* \
         /var/tmp/* \
-        /tmp/* && \
+        /tmp/*
 
 # Install steamcmd and verify that it is working
 RUN mkdir -p /steamcmd && \

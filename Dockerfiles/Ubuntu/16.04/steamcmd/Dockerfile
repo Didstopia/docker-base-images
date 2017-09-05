@@ -16,7 +16,7 @@ RUN apt-get update && \
     rm -rf \
         /var/lib/apt/lists/* \
         /var/tmp/* \
-        /tmp/* && \
+        /tmp/*
 
 # Install steamcmd and verify that it is working
 RUN mkdir -p /steamcmd && \

@@ -10,28 +10,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Run as root by default
 USER root
 
-# Update system packages, install core dependencies
-# and generate default locales
-RUN apt-get update && \
-    apt-get install apt-utils -y --no-install-recommends && \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        software-properties-common \
-        python-software-properties \
-        locales \
-        wget \
-        curl \
-        bsdtar && \
-    apt-get upgrade -y && \
-    apt-get dist-upgrade -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf \
-        /var/lib/apt/lists/* \
-        /var/tmp/* \
-        /tmp/* && \
-    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-
 # Install gosu
 ENV GOSU_VERSION 1.10
 RUN set -ex; \
@@ -59,6 +37,28 @@ RUN set -ex; \
 	gosu nobody true; \
 	\
 	apt-get purge -y --auto-remove $fetchDeps
+
+# Update system packages, install core dependencies
+# and generate default locales
+RUN apt-get update && \
+    apt-get install apt-utils -y --no-install-recommends && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        software-properties-common \
+        python-software-properties \
+        locales \
+        wget \
+        curl \
+        bsdtar && \
+    apt-get upgrade -y && \
+    apt-get dist-upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/tmp/* \
+        /tmp/* && \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 # Create a default user and group (docker)
 RUN groupadd \

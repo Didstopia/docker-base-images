@@ -8,19 +8,18 @@ MAINTAINER Didstopia <support@didstopia.com>
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies and verify that Node.js is working
-RUN curl -sL https://deb.nodesource.com/setup_6.x \
-    | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     nodejs \
     jq \
-    build-essential && \ && \
+    build-essential && \
     node -v && npm -v && \
     apt-get clean && \
     rm -rf \
         /var/lib/apt/lists/* \
         /var/tmp/* \
-        /tmp/* && \
+        /tmp/*
 
 # Add Node.js initialization script
 ADD Scripts/nodejs_init.sh /nodejs_init.sh
