@@ -1,15 +1,24 @@
-FROM didstopia/base:ubuntu-14.04
+# Base image
+FROM didstopia/base:ubuntu-16.04
 
+# Maintainer information
 MAINTAINER Didstopia <support@didstopia.com>
 
+# Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     lib32gcc1 \
     libstdc++6 && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/tmp/* \
+        /tmp/* && \
 
+# Install steamcmd and verify that it is working
 RUN mkdir -p /steamcmd && \
     curl -s http://media.steampowered.com/installer/steamcmd_linux.tar.gz \
     | tar -v -C /steamcmd -zx && \

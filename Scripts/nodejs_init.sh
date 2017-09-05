@@ -11,8 +11,7 @@ cd "/app" ||
     exit 1
 }
 
-if [ -f /app/package.json ]
-then
+if [ -f /app/package.json ]; then
     echo "Installing dependencies.."
     npm install
     if jq -e ".scripts.build" package.json >/dev/null; then
