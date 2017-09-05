@@ -1,11 +1,11 @@
+# Base image
 FROM didstopia/base:alpine-3.5
 
+# Maintainer information
 MAINTAINER Didstopia <support@didstopia.com>
 
-RUN addgroup -g 1000 node \
-    && adduser -u 1000 -G node -s /bin/sh -D node && \
-    apk --no-cache add \
-    bash \
+# Install dependencies and verify that Node.js is working
+RUN apk --no-cache add \
     curl \
     nodejs \
     jq \
@@ -15,19 +15,23 @@ RUN addgroup -g 1000 node \
     libstdc++ \
     linux-headers \
     binutils-gold \
-    python
+    python && \
+    node -v && npm -v
 
-RUN node -v && npm -v 
+# Add Node.js initialization script
+ADD Scripts/nodejs_init.sh /nodejs_init.sh
+RUN chmod +x /nodejs_init.sh
 
-COPY Scripts/nodejs_init.sh /init.sh
+# Run as the "docker" user by default
+ENV PGID 1000
+ENV PUID 1000
 
-RUN chmod +x /init.sh && \
-    mkdir -p /app
-
-VOLUME /app
-
-USER node
-
+# Expose ports
 EXPOSE 3000
 
-ENTRYPOINT bash /init.sh
+# When this image is used as a base image for other images,
+# we will automatically install Node.js dependencies (if necessary)
+ONBUILD RUN if [ -f /app/package.json ]; then cd /app && npm install; fi
+
+# Run the Node.js initialization script as the default command
+CMD ["/bin/bash", "/nodejs_init.sh"]
