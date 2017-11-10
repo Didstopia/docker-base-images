@@ -60,6 +60,16 @@ else
     fi
     echo ""
 
+    echo ""
+    echo "  * Alpine Edge"
+    if [ "$UPDATE_ALPINE_EDGE" == "1" ]; then
+        echo ""
+        eval $(./docker-make.sh -f .docker-make.alpine-edge.yml) >/dev/null 2>&1
+    else
+        echo -n "    > No update necessary, skipping.."
+    fi
+    echo ""
+
     # Disable error handling (useful when running with "source")
     set +e
     set +o pipefail
