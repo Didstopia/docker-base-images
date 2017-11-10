@@ -83,7 +83,7 @@ docker pull didstopia/base:nodejs-steamcmd-ubuntu-16.04 > /dev/null
 echo -n "done"
 echo ""
 
-# Alpine
+# Alpine 3.5
 echo ""
 echo "  * Alpine 3.5"
 echo -n "    > alpine-3.5.. "
@@ -92,6 +92,18 @@ echo -n "done"
 echo ""
 echo -n "    > nodejs-alpine-3.5.. "
 docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
+echo -n "done"
+echo ""
+
+# Alpine Edge
+echo ""
+echo "  * Alpine Edge"
+echo -n "    > alpine-edge.. "
+docker pull didstopia/base:alpine-edge > /dev/null > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-alpine-edge.. "
+docker pull didstopia/base:nodejs-alpine-edge > /dev/null
 echo -n "done"
 echo ""
 

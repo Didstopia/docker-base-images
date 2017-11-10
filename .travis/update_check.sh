@@ -26,6 +26,7 @@ else
     UPDATE_UBUNTU_16_04=0
     UPDATE_UBUNTU_14_04=0
     UPDATE_ALPINE_3_5=0
+    UPDATE_ALPINE_EDGE=0
 
     # Check each image for updates and set an environment
     # variable that's then used in the build script
@@ -72,10 +73,24 @@ else
     fi
 
     echo ""
+    echo "  * Alpine Edge"
+    echo -n "    > Checking for updates.. "
+    if docker run --name test -it --rm didstopia/base:alpine-edge /bin/ash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    then
+        echo -n "updates available"
+        echo ""
+        UPDATE_ALPINE_EDGE=1
+    else
+        echo -n "no updates available"
+        echo ""
+    fi
+
+    echo ""
     echo -n "Exporting results as environment variables.. "
     export UPDATE_UBUNTU_14_04
     export UPDATE_UBUNTU_16_04
     export UPDATE_ALPINE_3_5
+    export UPDATE_ALPINE_EDGE
     echo -n "done"
     echo ""
 
