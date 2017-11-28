@@ -13,6 +13,7 @@ RUN apk --no-cache add \
     gcc \
     g++ \
     libstdc++ \
+    libc6-compat \
     linux-headers \
     binutils-gold \
     python && \
