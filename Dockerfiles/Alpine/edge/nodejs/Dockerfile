@@ -8,6 +8,7 @@ MAINTAINER Didstopia <support@didstopia.com>
 RUN apk --no-cache add \
     curl \
     nodejs \
+    nodejs-npm \
     jq \
     make \
     gcc \
