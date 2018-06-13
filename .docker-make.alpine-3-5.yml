@@ -14,6 +14,23 @@ builds:
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
       - "org.label-schema.vcs-ref={fcommitid}"
       - "org.label-schema.schema-version=1.0"
+
+  static-alpine-3.5:
+    context: /
+    dockerfile: Dockerfiles/Alpine/3.5/static/Dockerfile
+    depends_on:
+      - alpine-3.5
+    pushes:
+      - "on_branch:master=didstopia/base:static-alpine-3.5"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for static hosting."
+      - "org.label-schema.version=static-alpine-3.5"
+      - "org.label-schema.description=An always up to date base image for static hosting."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
   
   nodejs-alpine-3.5:
     context: /
