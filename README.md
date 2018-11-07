@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/Didstopia/docker-base-images.svg?branch=master)](https://travis-ci.org/Didstopia/docker-base-images)
 
-**NOTE:** This is still a work in progress.
-
 These images are automatically built, tested and pushed on a daily basis, so they're always up to date.
+
+To see all the available images, please go to [this Docker Hub page](https://hub.docker.com/r/didstopia/base/).
 
 ---
 
