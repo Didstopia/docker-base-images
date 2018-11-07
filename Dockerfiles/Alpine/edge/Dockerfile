@@ -2,7 +2,7 @@
 FROM alpine:edge
 
 # Maintainer information
-MAINTAINER Didstopia <support@didstopia.com>
+LABEL maintainer="Didstopia <support@didstopia.com>"
 
 # Run as root by default
 USER root
@@ -12,6 +12,7 @@ ENV GOSU_VERSION 1.10
 RUN set -ex; \
 	\
 	apk add --no-cache --virtual .gosu-deps \
+	  ca-certificates \
 		dpkg \
 		gnupg \
 		openssl \

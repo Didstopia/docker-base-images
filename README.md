@@ -10,9 +10,9 @@ To see all the available images, please go to [this Docker Hub page](https://hub
 
 ## Development
 
-Build the images:
+Build the images (Alpine used as an example):
 ```sh
-./docker-make.sh --no-push
+./docker-make.sh --no-push --remove --detailed --file .docker-make.alpine-3-5.yml
 ```
 
 Check the `.travis` folder for scripts used for checking updates, testing etc.

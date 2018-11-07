@@ -2,7 +2,7 @@
 FROM alpine:3.5
 
 # Maintainer information
-MAINTAINER Didstopia <support@didstopia.com>
+LABEL maintainer="Didstopia <support@didstopia.com>"
 
 # Run as root by default
 USER root
@@ -12,14 +12,15 @@ ENV GOSU_VERSION 1.10
 RUN set -ex; \
 	\
 	apk add --no-cache --virtual .gosu-deps \
+		ca-certificates \
 		dpkg \
 		gnupg \
 		openssl \
 	; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+	wget --no-check-certificate -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget --no-check-certificate -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
 	\
 	# verify the signature
 	export GNUPGHOME="$(mktemp -d)"; \

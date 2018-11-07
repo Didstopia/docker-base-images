@@ -2,7 +2,7 @@
 FROM didstopia/base:alpine-edge
 
 # Maintainer information
-MAINTAINER Didstopia <support@didstopia.com>
+LABEL maintainer="Didstopia <support@didstopia.com>"
 
 # Install dependencies and verify that Node.js is working
 RUN apk --no-cache add \

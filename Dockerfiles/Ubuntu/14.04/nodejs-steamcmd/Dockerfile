@@ -2,7 +2,7 @@
 FROM didstopia/base:steamcmd-ubuntu-14.04
 
 # Maintainer information
-MAINTAINER Didstopia <support@didstopia.com>
+LABEL maintainer="Didstopia <support@didstopia.com>"
 
 # Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
