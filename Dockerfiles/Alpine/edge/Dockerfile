@@ -8,8 +8,11 @@ LABEL maintainer="Didstopia <support@didstopia.com>"
 USER root
 
 # Install gosu
-ENV GOSU_VERSION 1.10
+ENV GOSU_VERSION 1.11
 RUN set -ex; \
+	\
+	apk update \
+	; \
 	\
 	apk add --no-cache --virtual .gosu-deps \
 	  ca-certificates \
@@ -17,6 +20,9 @@ RUN set -ex; \
 		gnupg \
 		openssl \
 	; \
+	\
+	# update certificates
+	update-ca-certificates 2>/dev/null || true; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
 	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
@@ -39,7 +45,9 @@ RUN apk --no-cache upgrade && \
     apk --no-cache add \
     bash \
     busybox-suid \
-    shadow
+    shadow \
+		ca-certificates && \
+		update-ca-certificates 2>/dev/null || true
 
 # Create a default user and group (docker)
 RUN addgroup \

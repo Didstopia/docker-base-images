@@ -94,6 +94,10 @@ echo -n "    > nodejs-alpine-3.5.. "
 docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
 echo -n "done"
 echo ""
+echo -n "    > go-alpine-3.5.. "
+docker pull didstopia/base:go-alpine-3.5 > /dev/null
+echo -n "done"
+echo ""
 
 # Alpine Edge
 echo ""
@@ -104,6 +108,10 @@ echo -n "done"
 echo ""
 echo -n "    > nodejs-alpine-edge.. "
 docker pull didstopia/base:nodejs-alpine-edge > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > go-alpine-edge.. "
+docker pull didstopia/base:go-alpine-edge > /dev/null
 echo -n "done"
 echo ""
 

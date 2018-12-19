@@ -48,3 +48,20 @@ builds:
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
       - "org.label-schema.vcs-ref={fcommitid}"
       - "org.label-schema.schema-version=1.0"
+
+  go-alpine-edge:
+    context: /
+    dockerfile: Dockerfiles/Alpine/edge/go/Dockerfile
+    depends_on:
+      - alpine-edge
+    pushes:
+      - "on_branch:master=didstopia/base:go-alpine-edge"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Go."
+      - "org.label-schema.version=go-alpine-edge"
+      - "org.label-schema.description=An always up to date base image for Go."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
