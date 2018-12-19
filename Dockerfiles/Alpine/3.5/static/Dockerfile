@@ -2,7 +2,7 @@
 FROM didstopia/base:alpine-3.5
 
 # Maintainer information
-MAINTAINER Didstopia <support@didstopia.com>
+LABEL maintainer="Didstopia <support@didstopia.com>"
 
 # Install nginx
 RUN apk --no-cache add \
