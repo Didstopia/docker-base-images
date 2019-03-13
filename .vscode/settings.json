@@ -1,6 +1,6 @@
 {
-    "workbench.colorTheme": "Oceanic_Next",
-    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Ayu Dark Bordered",
+    "workbench.iconTheme": "ayu",
     "extensions.autoUpdate": true,
     "editor.wordWrap": "on",
     "files.autoSave": "afterDelay"
