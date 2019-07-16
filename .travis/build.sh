@@ -19,6 +19,7 @@ if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; t
     UPDATE_UBUNTU_16_04=1
     UPDATE_UBUNTU_14_04=1
     UPDATE_ALPINE_3_5=1
+    UPDATE_ALPINE_3_10=1
     UPDATE_ALPINE_EDGE=1
 elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
     echo ""
@@ -26,6 +27,7 @@ elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
     UPDATE_UBUNTU_16_04=1
     UPDATE_UBUNTU_14_04=1
     UPDATE_ALPINE_3_5=1
+    UPDATE_ALPINE_3_10=1
     UPDATE_ALPINE_EDGE=1
 fi
 
@@ -60,6 +62,16 @@ echo "  * Alpine 3.5"
 if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
     echo ""
     eval $(./docker-make.sh --no-push -f .docker-make.alpine-3-5.yml) >/dev/null 2>&1
+else
+    echo -n "    > No build necessary, skipping.."
+fi
+echo ""
+
+echo ""
+echo "  * Alpine 3.10"
+if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
+    echo ""
+    eval $(./docker-make.sh --no-push -f .docker-make.alpine-3-10.yml) >/dev/null 2>&1
 else
     echo -n "    > No build necessary, skipping.."
 fi

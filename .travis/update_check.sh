@@ -26,6 +26,7 @@ else
     UPDATE_UBUNTU_16_04=0
     UPDATE_UBUNTU_14_04=0
     UPDATE_ALPINE_3_5=0
+    UPDATE_ALPINE_3_10=0
     UPDATE_ALPINE_EDGE=0
 
     # Check each image for updates and set an environment
@@ -62,7 +63,7 @@ else
     echo ""
     echo "  * Alpine 3.5"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.5 /bin/ash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    if docker run --name test -it --rm didstopia/base:alpine-3.5 /bin/bash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
     then
         echo -n "updates available"
         echo ""
@@ -73,9 +74,22 @@ else
     fi
 
     echo ""
+    echo "  * Alpine 3.10"
+    echo -n "    > Checking for updates.. "
+    if docker run --name test -it --rm didstopia/base:alpine-3.10 /bin/bash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    then
+        echo -n "updates available"
+        echo ""
+        UPDATE_ALPINE_3_10=1
+    else
+        echo -n "no updates available"
+        echo ""
+    fi
+
+    echo ""
     echo "  * Alpine Edge"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:alpine-edge /bin/ash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    if docker run --name test -it --rm didstopia/base:alpine-edge /bin/bash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
     then
         echo -n "updates available"
         echo ""
@@ -90,6 +104,7 @@ else
     export UPDATE_UBUNTU_14_04
     export UPDATE_UBUNTU_16_04
     export UPDATE_ALPINE_3_5
+    export UPDATE_ALPINE_3_10
     export UPDATE_ALPINE_EDGE
     echo -n "done"
     echo ""
