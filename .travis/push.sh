@@ -61,6 +61,16 @@ else
     echo ""
 
     echo ""
+    echo "  * Alpine 3.10"
+    if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
+        echo ""
+        eval $(./docker-make.sh -f .docker-make.alpine-3-10.yml) >/dev/null 2>&1
+    else
+        echo -n "    > No update necessary, skipping.."
+    fi
+    echo ""
+
+    echo ""
     echo "  * Alpine Edge"
     if [ "$UPDATE_ALPINE_EDGE" == "1" ]; then
         echo ""

@@ -1,25 +1,24 @@
 # Base image
-FROM didstopia/base:steamcmd-ubuntu-16.04
+FROM didstopia/base:alpine-3.10
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
 
-# Disable TTY interaction
-ARG DEBIAN_FRONTEND=noninteractive
-
 # Install dependencies and verify that Node.js is working
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apk --no-cache add \
+    curl \
     nodejs \
+    nodejs-npm \
     jq \
-    build-essential && \
-    node -v && npm -v && \
-    apt-get clean && \
-    rm -rf \
-        /var/lib/apt/lists/* \
-        /var/tmp/* \
-        /tmp/*
+    make \
+    gcc \
+    g++ \
+    libstdc++ \
+    libc6-compat \
+    linux-headers \
+    binutils-gold \
+    python && \
+    node -v && npm -v
 
 # Add Node.js initialization script
 ADD Scripts/nodejs_init.sh /nodejs_init.sh
