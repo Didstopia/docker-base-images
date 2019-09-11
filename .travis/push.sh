@@ -34,7 +34,7 @@ else
     echo "  * Ubuntu 14.04"
     if [ "$UPDATE_UBUNTU_14_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh -f .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -44,7 +44,7 @@ else
     echo "  * Ubuntu 16.04"
     if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh -f .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -54,7 +54,7 @@ else
     echo "  * Alpine 3.5"
     if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh -f .docker-make.alpine-3-5.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-5.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -64,7 +64,7 @@ else
     echo "  * Alpine 3.10"
     if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh -f .docker-make.alpine-3-10.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-10.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -74,7 +74,7 @@ else
     echo "  * Alpine Edge"
     if [ "$UPDATE_ALPINE_EDGE" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh -f .docker-make.alpine-edge.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.alpine-edge.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi
