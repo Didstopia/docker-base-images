@@ -10,8 +10,15 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Run as root by default
 USER root
 
+# Install core dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gpg \
+        gpg-agent \
+        dirmngr
+
 # Install gosu
-ENV GOSU_VERSION 1.10
+ENV GOSU_VERSION 1.11
 RUN set -ex; \
 	\
 	fetchDeps=' \
@@ -45,7 +52,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         software-properties-common \
-        python-software-properties \
         locales \
         wget \
         curl \

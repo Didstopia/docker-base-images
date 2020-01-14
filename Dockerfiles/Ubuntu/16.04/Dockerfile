@@ -11,7 +11,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 USER root
 
 # Install gosu
-ENV GOSU_VERSION 1.10
+ENV GOSU_VERSION 1.11
 RUN set -ex; \
 	\
 	fetchDeps=' \

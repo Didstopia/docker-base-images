@@ -21,6 +21,9 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
         /var/tmp/* \
         /tmp/*
 
+# Update npm to the latest version
+RUN npm install npm@latest -g
+
 # Add Node.js initialization script
 ADD Scripts/nodejs_init.sh /nodejs_init.sh
 RUN chmod +x /nodejs_init.sh

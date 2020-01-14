@@ -19,6 +19,9 @@ RUN apk --no-cache add \
     python && \
     node -v && npm -v
 
+# Update npm to the latest version
+RUN npm install npm@latest -g
+
 # Add Node.js initialization script
 ADD Scripts/nodejs_init.sh /nodejs_init.sh
 RUN chmod +x /nodejs_init.sh
