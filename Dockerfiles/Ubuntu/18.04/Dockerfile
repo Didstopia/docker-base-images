@@ -1,5 +1,5 @@
 # Base image
-FROM ubuntu:14.04
+FROM ubuntu:18.04
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"

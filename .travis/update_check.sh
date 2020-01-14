@@ -24,7 +24,7 @@ elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
 else
     # Environment variables exported at the end of the script
     UPDATE_UBUNTU_16_04=0
-    UPDATE_UBUNTU_14_04=0
+    UPDATE_UBUNTU_18_04=0
     UPDATE_ALPINE_3_5=0
     UPDATE_ALPINE_3_10=0
     UPDATE_ALPINE_EDGE=0
@@ -35,19 +35,6 @@ else
     echo "Checking images for updates.."
 
     echo ""
-    echo "  * Ubuntu 14.04"
-    echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:ubuntu-14.04 bash -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
-    then
-        echo -n "updates available"
-        echo ""
-        UPDATE_UBUNTU_14_04=1
-    else
-        echo -n "no updates available"
-        echo ""
-    fi
-
-    echo ""
     echo "  * Ubuntu 16.04"
     echo -n "    > Checking for updates.. "
     if docker run --name test -it --rm didstopia/base:ubuntu-16.04 bash -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
@@ -55,6 +42,19 @@ else
         echo -n "updates available"
         echo ""
         UPDATE_UBUNTU_16_04=1
+    else
+        echo -n "no updates available"
+        echo ""
+    fi
+
+    echo ""
+    echo "  * Ubuntu 18.04"
+    echo -n "    > Checking for updates.. "
+    if docker run --name test -it --rm didstopia/base:ubuntu-18.04 bash -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
+    then
+        echo -n "updates available"
+        echo ""
+        UPDATE_UBUNTU_18_04=1
     else
         echo -n "no updates available"
         echo ""
@@ -101,8 +101,8 @@ else
 
     echo ""
     echo -n "Exporting results as environment variables.. "
-    export UPDATE_UBUNTU_14_04
     export UPDATE_UBUNTU_16_04
+    export UPDATE_UBUNTU_18_04
     export UPDATE_ALPINE_3_5
     export UPDATE_ALPINE_3_10
     export UPDATE_ALPINE_EDGE

@@ -1,5 +1,5 @@
 # Base image
-FROM didstopia/base:ubuntu-14.04
+FROM didstopia/base:steamcmd-ubuntu-18.04
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"

@@ -43,26 +43,6 @@ echo ""
 echo ""
 echo "Pulling latest images.."
 
-# Ubuntu 14.04
-echo ""
-echo "  * Ubuntu 14.04"
-echo -n "    > ubuntu-14.04.. "
-docker pull didstopia/base:ubuntu-14.04 > /dev/null
-echo -n "done"
-echo ""
-echo -n "    > nodejs-ubuntu-14.04.. "
-docker pull didstopia/base:nodejs-ubuntu-14.04 > /dev/null
-echo -n "done"
-echo ""
-echo -n "    > steamcmd-ubuntu-14.04.. "
-docker pull didstopia/base:steamcmd-ubuntu-14.04 > /dev/null
-echo -n "done"
-echo ""
-echo -n "    > nodejs-steamcmd-ubuntu-14.04.. "
-docker pull didstopia/base:nodejs-steamcmd-ubuntu-14.04 > /dev/null
-echo -n "done"
-echo ""
-
 # Ubuntu 16.04
 echo ""
 echo "  * Ubuntu 16.04"
@@ -80,6 +60,26 @@ echo -n "done"
 echo ""
 echo -n "    > nodejs-steamcmd-ubuntu-16.04.. "
 docker pull didstopia/base:nodejs-steamcmd-ubuntu-16.04 > /dev/null
+echo -n "done"
+echo ""
+
+# Ubuntu 18.04
+echo ""
+echo "  * Ubuntu 18.04"
+echo -n "    > ubuntu-18.04.. "
+docker pull didstopia/base:ubuntu-18.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-ubuntu-18.04.. "
+docker pull didstopia/base:nodejs-ubuntu-18.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > steamcmd-ubuntu-18.04.. "
+docker pull didstopia/base:steamcmd-ubuntu-18.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-steamcmd-ubuntu-18.04.. "
+docker pull didstopia/base:nodejs-steamcmd-ubuntu-18.04 > /dev/null
 echo -n "done"
 echo ""
 
