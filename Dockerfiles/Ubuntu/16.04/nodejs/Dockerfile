@@ -8,7 +8,7 @@ LABEL maintainer="Didstopia <support@didstopia.com>"
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies and verify that Node.js is working
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     nodejs \
