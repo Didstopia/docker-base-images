@@ -10,15 +10,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Run as root by default
 USER root
 
-# Install core dependencies
-# RUN apt-get update && \
-#     apt-get install -y --no-install-recommends \
-#         gpg \
-#         gpg-agent \
-#         dirmngr \
-#         ca-certificates \
-#         wget \
-#         curl
+# Fix Ubuntu 18.04 specific dependency issues
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends gnupg2 dirmngr
 
 # Install and setup gosu
 # More information at https://github.com/tianon/gosu/blob/master/INSTALL.md
@@ -28,9 +22,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends ca-certificates wget; \
-	if ! command -v gpg; then \
-		apt-get install -y --no-install-recommends gnupg2 dirmngr; \
-	elif gpg --version | grep -q '^gpg (GnuPG) 1\.'; then \
+	if gpg --version | grep -q '^gpg (GnuPG) 1\.'; then \
     # "This package provides support for HKPS keyservers." (GnuPG 1.x only)
 		apt-get install -y --no-install-recommends gnupg-curl; \
 	fi; \
