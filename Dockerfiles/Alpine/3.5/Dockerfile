@@ -9,67 +9,39 @@ USER root
 
 # Install and setup gosu
 ENV GOSU_VERSION 1.11
-RUN set -eux; \
+RUN set -ex; \
+	\
+	apk update \
+	; \
 	\
 	apk add --no-cache --virtual .gosu-deps \
 		ca-certificates \
 		dpkg \
 		gnupg \
+		openssl \
 	; \
 	\
+	# update certificates
+	update-ca-certificates 2>/dev/null || true; \
+	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+	wget --no-check-certificate -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget --no-check-certificate -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
 	\
 	# verify the signature
 	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	(gpg --keyserver hkp://p80.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
+		gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
+		gpg --keyserver hkp://pgp.mit.edu --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4); \
+	#gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	command -v gpgconf && gpgconf --kill all || :; \
-	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-	\
-	# clean up fetch dependencies
-	apk del --no-network .gosu-deps; \
+	rm -fr "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	\
 	chmod +x /usr/local/bin/gosu; \
 	# verify that the binary works
-	gosu --version; \
-	gosu nobody true
-
-# ENV GOSU_VERSION 1.11
-# RUN set -ex; \
-# 	\
-# 	apk update \
-# 	; \
-# 	\
-# 	apk add --no-cache --virtual .gosu-deps \
-# 		ca-certificates \
-# 		dpkg \
-# 		gnupg \
-# 		openssl \
-# 	; \
-# 	\
-# 	# update certificates
-# 	update-ca-certificates 2>/dev/null || true; \
-# 	\
-# 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-# 	wget --no-check-certificate -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-# 	wget --no-check-certificate -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-# 	\
-# 	# verify the signature
-# 	export GNUPGHOME="$(mktemp -d)"; \
-# 	(gpg --keyserver hkp://p80.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
-# 		gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
-# 		gpg --keyserver hkp://pgp.mit.edu --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4); \
-# 	#gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-# 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-# 	rm -fr "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-# 	\
-# 	chmod +x /usr/local/bin/gosu; \
-# 	# verify that the binary works
-# 	gosu nobody true; \
-# 	\
-# 	apk del .gosu-deps
+	gosu nobody true; \
+	\
+	apk del .gosu-deps
 
 # Update system packages and install core dependencies
 RUN apk update && \
@@ -99,7 +71,7 @@ RUN addgroup \
         docker
 
 # Set default volume
-VOLUME ["/app"]
+#VOLUME ["/app"]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8

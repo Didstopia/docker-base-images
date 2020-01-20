@@ -44,7 +44,7 @@ builds:
     labels:
       - "org.label-schema.vendor=Didstopia"
       - "org.label-schema.name=Base Docker image for Node.js v10."
-      - "org.label-schema.version=nodejs-ubuntu-18.04"
+      - "org.label-schema.version=nodejs-10-ubuntu-18.04"
       - "org.label-schema.description=An always up to date base image for Node.js v10."
       - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
@@ -63,7 +63,7 @@ builds:
     labels:
       - "org.label-schema.vendor=Didstopia"
       - "org.label-schema.name=Base Docker image for Node.js v12."
-      - "org.label-schema.version=nodejs-ubuntu-18.04"
+      - "org.label-schema.version=nodejs--12ubuntu-18.04"
       - "org.label-schema.description=An always up to date base image for Node.js v12."
       - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
@@ -99,7 +99,7 @@ builds:
     labels:
       - "org.label-schema.vendor=Didstopia"
       - "org.label-schema.name=Base Docker image for Node.js v10 and steamcmd."
-      - "org.label-schema.version=nodejs-steamcmd-ubuntu-18.04"
+      - "org.label-schema.version=nodejs-10-steamcmd-ubuntu-18.04"
       - "org.label-schema.description=An always up to date base image for Node.js v10 and steamcmd."
       - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
@@ -118,7 +118,7 @@ builds:
     labels:
       - "org.label-schema.vendor=Didstopia"
       - "org.label-schema.name=Base Docker image for Node.js v12 and steamcmd."
-      - "org.label-schema.version=nodejs-steamcmd-ubuntu-18.04"
+      - "org.label-schema.version=nodejs-12-steamcmd-ubuntu-18.04"
       - "org.label-schema.description=An always up to date base image for Node.js v12 and steamcmd."
       - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"

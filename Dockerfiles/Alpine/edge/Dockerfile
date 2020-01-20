@@ -63,7 +63,7 @@ RUN addgroup \
         docker
 
 # Set default volume
-VOLUME ["/app"]
+#VOLUME ["/app"]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8
