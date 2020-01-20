@@ -11,22 +11,29 @@ ARG DEBIAN_FRONTEND=noninteractive
 USER root
 
 # Install core dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        gpg \
-        gpg-agent \
-        dirmngr
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#         gpg \
+#         gpg-agent \
+#         dirmngr \
+#         ca-certificates \
+#         wget \
+#         curl
 
-# Install gosu
+# Install and setup gosu
+# More information at https://github.com/tianon/gosu/blob/master/INSTALL.md
 ENV GOSU_VERSION 1.11
-RUN set -ex; \
-	\
-	fetchDeps=' \
-		ca-certificates \
-		wget \
-	'; \
+RUN set -eux; \
+    # save list of currently installed packages for later so we can clean up
+	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
-	apt-get install -y --no-install-recommends $fetchDeps; \
+	apt-get install -y --no-install-recommends ca-certificates wget; \
+	if ! command -v gpg; then \
+		apt-get install -y --no-install-recommends gnupg2 dirmngr; \
+	elif gpg --version | grep -q '^gpg (GnuPG) 1\.'; then \
+    # "This package provides support for HKPS keyservers." (GnuPG 1.x only)
+		apt-get install -y --no-install-recommends gnupg-curl; \
+	fi; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
@@ -35,15 +42,20 @@ RUN set -ex; \
 	\
     # verify the signature
 	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	command -v gpgconf && gpgconf --kill all || :; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	\
+    # clean up fetch dependencies
+	apt-mark auto '.*' > /dev/null; \
+	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	\
 	chmod +x /usr/local/bin/gosu; \
     # verify that the binary works
-	gosu nobody true; \
-	\
-	apt-get purge -y --auto-remove $fetchDeps
+	gosu --version; \
+	gosu nobody true
 
 # Update system packages, install core dependencies
 # and generate default locales
@@ -81,15 +93,15 @@ RUN groupadd \
         docker
 
 # Set default volume
-#VOLUME ["/app"]
+VOLUME ["/app"]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.utf8
 ENV TERM xterm
 ENV TZ Etc/UTC
-ENV PGID 0
-ENV PUID 0
+ENV PGID 1000
+ENV PUID 1000
 
 # Include Readme and License with each image
 COPY README.md LICENSE.md /

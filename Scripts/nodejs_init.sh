@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 set -o pipefail
 
-echo "Initializing.."
+echo "Initializing Node.js support.."
 
 cd "/app" ||
 {

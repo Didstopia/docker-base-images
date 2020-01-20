@@ -50,16 +50,24 @@ echo -n "    > ubuntu-16.04.. "
 docker pull didstopia/base:ubuntu-16.04 > /dev/null
 echo -n "done"
 echo ""
-echo -n "    > nodejs-ubuntu-16.04.. "
-docker pull didstopia/base:nodejs-ubuntu-16.04 > /dev/null
+echo -n "    > nodejs-10-ubuntu-16.04.. "
+docker pull didstopia/base:nodejs-10-ubuntu-16.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-12-ubuntu-16.04.. "
+docker pull didstopia/base:nodejs-12-ubuntu-16.04 > /dev/null
 echo -n "done"
 echo ""
 echo -n "    > steamcmd-ubuntu-16.04.. "
 docker pull didstopia/base:steamcmd-ubuntu-16.04 > /dev/null
 echo -n "done"
 echo ""
-echo -n "    > nodejs-steamcmd-ubuntu-16.04.. "
-docker pull didstopia/base:nodejs-steamcmd-ubuntu-16.04 > /dev/null
+echo -n "    > nodejs-10-steamcmd-ubuntu-16.04.. "
+docker pull didstopia/base:nodejs-10-steamcmd-ubuntu-16.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-12-steamcmd-ubuntu-16.04.. "
+docker pull didstopia/base:nodejs-12-steamcmd-ubuntu-16.04 > /dev/null
 echo -n "done"
 echo ""
 
@@ -70,16 +78,24 @@ echo -n "    > ubuntu-18.04.. "
 docker pull didstopia/base:ubuntu-18.04 > /dev/null
 echo -n "done"
 echo ""
-echo -n "    > nodejs-ubuntu-18.04.. "
-docker pull didstopia/base:nodejs-ubuntu-18.04 > /dev/null
+echo -n "    > nodejs-10-ubuntu-18.04.. "
+docker pull didstopia/base:nodejs-10-ubuntu-18.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-12-ubuntu-18.04.. "
+docker pull didstopia/base:nodejs-12-ubuntu-18.04 > /dev/null
 echo -n "done"
 echo ""
 echo -n "    > steamcmd-ubuntu-18.04.. "
 docker pull didstopia/base:steamcmd-ubuntu-18.04 > /dev/null
 echo -n "done"
 echo ""
-echo -n "    > nodejs-steamcmd-ubuntu-18.04.. "
-docker pull didstopia/base:nodejs-steamcmd-ubuntu-18.04 > /dev/null
+echo -n "    > nodejs-10-steamcmd-ubuntu-18.04.. "
+docker pull didstopia/base:nodejs-10-steamcmd-ubuntu-18.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > nodejs-12-steamcmd-ubuntu-18.04.. "
+docker pull didstopia/base:nodejs-12-steamcmd-ubuntu-18.04 > /dev/null
 echo -n "done"
 echo ""
 

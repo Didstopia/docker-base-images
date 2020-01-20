@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Enable error handling
 set -e
@@ -8,14 +8,15 @@ ln -snf "/usr/share/zoneinfo/${TZ}" "/etc/localtime"
 echo "${TZ}" > "/etc/timezone"
 
 # Set the group and user identifiers
-groupmod --non-unique --gid "${PGID}" docker &> /dev/null
-usermod --non-unique --uid "${PUID}" docker &> /dev/null
+groupmod --non-unique --gid ${PGID} docker &> /dev/null
+usermod --non-unique --uid ${PUID} docker &> /dev/null
 
 # Set the correct permissions
-chown docker:docker /app
+chown ${PUID}:${PGID} /app
 
 # Show a disclaimer
 echo "
+
 ╔═════════════════════════════════════════════════╗
 ║    _____  _     _     _              _          ║
 ║   |  __ \(_)   | |   | |            (_)         ║
@@ -32,7 +33,8 @@ echo "
 ║ For more information:                           ║
 ║ https://github.com/Didstopia/docker-base-images ║
 ╚═════════════════════════════════════════════════╝
+
 "
 
 # Continue execution
-exec gosu docker "$@"
+exec gosu ${PUID}:${PGID} "$@"
