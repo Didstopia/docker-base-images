@@ -68,6 +68,16 @@ RUN apt-get update && \
         /tmp/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
+# Fix curl issues
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libcurl3 && \
+    ls -la /usr/lib/x86_64-linux-gnu/libcurl.so* && \
+    cp /usr/lib/x86_64-linux-gnu/libcurl.so.3 /usr/lib/libcurl.so && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/tmp/* \
+        /tmp/*
+
 # Create a default user and group (docker)
 RUN groupadd \
         --system \
@@ -81,9 +91,6 @@ RUN groupadd \
         --groups docker,users,staff \
         --shell /bin/false \
         docker
-
-# Set default volume
-#VOLUME ["/app"]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8
