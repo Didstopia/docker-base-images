@@ -1,5 +1,5 @@
 # Base image
-FROM didstopia/base:steamcmd-ubuntu-14.04
+FROM didstopia/base:ubuntu-18.04
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
@@ -7,11 +7,15 @@ LABEL maintainer="Didstopia <support@didstopia.com>"
 # Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Default Node.js version
+ARG NODE_VERSION=10
+
 # Install dependencies and verify that Node.js is working
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     nodejs \
+    python-dev \
     jq \
     build-essential && \
     node -v && npm -v && \
@@ -21,20 +25,29 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
         /var/tmp/* \
         /tmp/*
 
+# Update npm to the latest version
+RUN npm install npm@latest -g
+
+# Validate the Node.js version
+RUN bash -c 'if [[ $(node -v) != v$NODE_VERSION* ]]; then echo "Incorrect Node.js version detected: $(node -v) (expected v${NODE_VERSION}.*)"; exit 1; fi'
+
 # Add Node.js initialization script
 ADD Scripts/nodejs_init.sh /nodejs_init.sh
 RUN chmod +x /nodejs_init.sh
 
 # Run as the "docker" user by default
-ENV PGID 1000
-ENV PUID 1000
+#ENV PGID 1000
+#ENV PUID 1000
 
 # Expose ports
-EXPOSE 3000
+#EXPOSE 3000
 
-# When this image is used as a base image for other images,
-# we will automatically install Node.js dependencies (if necessary)
-ONBUILD RUN if [ -f /app/package.json ]; then cd /app && npm install; fi
+# Set the working directory
+#WORKDIR /app
+
+# Set onbuild instructions when using this as a base image
+#ONBUILD COPY . /app
+#ONBUILD RUN if [ -f /app/package.json ]; then npm install; fi
 
 # Run the Node.js initialization script as the default command
 CMD ["/bin/bash", "/nodejs_init.sh"]

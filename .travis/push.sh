@@ -31,20 +31,20 @@ else
     ## TODO: Figure out how to properly redirect docker-make's output to /dev/null
 
     echo ""
-    echo "  * Ubuntu 14.04"
-    if [ "$UPDATE_UBUNTU_14_04" == "1" ]; then
+    echo "  * Ubuntu 16.04"
+    if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi
     echo ""
 
     echo ""
-    echo "  * Ubuntu 16.04"
-    if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
+    echo "  * Ubuntu 18.04"
+    if [ "$UPDATE_UBUNTU_18_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
+        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi

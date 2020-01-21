@@ -17,7 +17,7 @@ if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; t
     echo ""
     echo "NOTICE: Pull request detected, building all images.."
     UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_14_04=1
+    UPDATE_UBUNTU_18_04=1
     UPDATE_ALPINE_3_5=1
     UPDATE_ALPINE_3_10=1
     UPDATE_ALPINE_EDGE=1
@@ -25,7 +25,7 @@ elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
     echo ""
     echo "NOTICE: Branch is not 'master', building all images.."
     UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_14_04=1
+    UPDATE_UBUNTU_18_04=1
     UPDATE_ALPINE_3_5=1
     UPDATE_ALPINE_3_10=1
     UPDATE_ALPINE_EDGE=1
@@ -38,20 +38,20 @@ echo "Building images.."
 ## TODO: Figure out how to properly redirect docker-make's output to /dev/null
 
 echo ""
-echo "  * Ubuntu 14.04"
-if [ "$UPDATE_UBUNTU_14_04" == "1" ]; then
+echo "  * Ubuntu 16.04"
+if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
     echo ""
-    eval $(./docker-make.sh --no-push --detailed --file .docker-make.ubuntu-14-04.yml) >/dev/null 2>&1
+    eval $(./docker-make.sh --no-push --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
 else
     echo -n "    > No build necessary, skipping.."
 fi
 echo ""
 
 echo ""
-echo "  * Ubuntu 16.04"
-if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
+echo "  * Ubuntu 18.04"
+if [ "$UPDATE_UBUNTU_18_04" == "1" ]; then
     echo ""
-    eval $(./docker-make.sh --no-push --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
+    eval $(./docker-make.sh --no-push --detailed --file .docker-make.ubuntu-18-04.yml) >/dev/null 2>&1
 else
     echo -n "    > No build necessary, skipping.."
 fi

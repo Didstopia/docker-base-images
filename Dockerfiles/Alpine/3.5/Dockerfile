@@ -7,7 +7,7 @@ LABEL maintainer="Didstopia <support@didstopia.com>"
 # Run as root by default
 USER root
 
-# Install gosu
+# Install and setup gosu
 ENV GOSU_VERSION 1.11
 RUN set -ex; \
 	\
@@ -45,13 +45,13 @@ RUN set -ex; \
 
 # Update system packages and install core dependencies
 RUN apk update && \
-		apk --no-cache upgrade && \
+	apk --no-cache upgrade && \
     apk --no-cache add \
-			bash \
-			busybox-suid \
-			shadow \
-			ca-certificates && \
-			update-ca-certificates 2>/dev/null || true
+		bash \
+		busybox-suid \
+		shadow \
+		ca-certificates && \
+	update-ca-certificates 2>/dev/null || true
 
 # Create a default user and group (docker)
 RUN addgroup \
@@ -78,8 +78,8 @@ ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.utf8
 ENV TERM xterm
 ENV TZ Etc/UTC
-ENV PGID 0
-ENV PUID 0
+ENV PGID 1000
+ENV PUID 1000
 
 # Include Readme and License with each image
 COPY README.md LICENSE.md /
