@@ -13,6 +13,7 @@ cd "/app" ||
 
 if [ -f /app/package.json ]; then
     echo "Installing dependencies.."
+    cd /app
     npm install
     if jq -e ".scripts.build" package.json >/dev/null; then
         echo "Building.."

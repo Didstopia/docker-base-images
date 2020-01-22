@@ -10,8 +10,22 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    lib32gcc1 \
-    libstdc++6 && \
+        lib32gcc1 \
+        libstdc++6 && \
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/tmp/* \
+        /tmp/*
+
+# Fix issues with libcurl and steamcmd
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libcurl4-openssl-dev:i386 && \
+    ls -la /usr/lib/*/libcurl.so* && \
+    ln -sf /usr/lib/i386-linux-gnu/libcurl.so.4 /usr/lib/i386-linux-gnu/libcurl.so && \
+    ln -sf /usr/lib/i386-linux-gnu/libcurl.so.4 /usr/lib/i386-linux-gnu/libcurl.so.3 && \
     apt-get clean && \
     rm -rf \
         /var/lib/apt/lists/* \
