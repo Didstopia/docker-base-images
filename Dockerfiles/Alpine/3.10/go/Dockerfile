@@ -44,9 +44,5 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 # Set the default working directory
 WORKDIR $GOPATH
 
-# Run as the "docker" user by default
-ENV PGID 1000
-ENV PUID 1000
-
 # Run the Node.js initialization script as the default command
 CMD ["/usr/local/go/bin/go", "run", "./..."]

@@ -26,19 +26,5 @@ RUN npm install npm@latest -g
 ADD Scripts/nodejs_init.sh /nodejs_init.sh
 RUN chmod +x /nodejs_init.sh
 
-# Run as the "docker" user by default
-#ENV PGID 1000
-#ENV PUID 1000
-
-# Expose ports
-#EXPOSE 3000
-
-# Set the working directory
-#WORKDIR /app
-
-# Set onbuild instructions when using this as a base image
-#ONBUILD COPY . /app
-#ONBUILD RUN if [ -f /app/package.json ]; then npm install; fi
-
 # Run the Node.js initialization script as the default command
 CMD ["/bin/bash", "/nodejs_init.sh"]

@@ -12,8 +12,8 @@ groupmod --non-unique --gid ${PGID} docker &> /dev/null
 usermod --non-unique --uid ${PUID} docker &> /dev/null
 
 # Set the correct permissions
-#chown ${PUID}:${PGID} /app
-chown docker:docker /app
+#chown -R ${PUID}:${PGID} /app
+chown -R docker:docker /app
 
 # Show a disclaimer
 echo "

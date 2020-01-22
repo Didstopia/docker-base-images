@@ -47,6 +47,7 @@ RUN apk update && \
 	update-ca-certificates 2>/dev/null || true
 
 # Create a default user and group (docker)
+# (also sets permissions for the /app volume)
 RUN addgroup \
         -S \
         -g 1000 \
@@ -61,10 +62,12 @@ RUN addgroup \
     usermod \
         -a \
         -G docker,users \
-        docker
+        docker && \
+    mkdir -p /app && \
+	chown -R docker:docker /app
 
-# Set default volume
-#VOLUME ["/app"]
+# Expose the /app volume
+VOLUME [ "/app" ]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8

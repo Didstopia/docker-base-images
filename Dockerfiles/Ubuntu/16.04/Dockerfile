@@ -69,6 +69,7 @@ RUN apt-get update && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 # Create a default user and group (docker)
+# (also sets permissions for the /app volume)
 RUN groupadd \
         --system \
         --gid 1000 \
@@ -80,10 +81,12 @@ RUN groupadd \
         --gid 1000 \
         --groups docker,users,staff \
         --shell /bin/false \
-        docker
+        docker && \
+    mkdir -p /app && \
+	chown -R docker:docker /app
 
-# Set default volume
-#VOLUME ["/app"]
+# Expose the /app volume
+VOLUME [ "/app" ]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8
