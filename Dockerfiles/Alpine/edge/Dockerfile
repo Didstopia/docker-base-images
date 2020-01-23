@@ -66,7 +66,7 @@ RUN addgroup \
 	chown -R docker:docker /app
 
 # Expose the /app volume
-VOLUME [ "/app" ]
+#VOLUME [ "/app" ]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8
