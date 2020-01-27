@@ -57,6 +57,7 @@ RUN apt-get update && \
         locales \
         wget \
         curl \
+        git \
         bsdtar && \
     apt-get upgrade -y && \
     apt-get dist-upgrade -y && \
@@ -93,8 +94,8 @@ ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.utf8
 ENV TERM xterm
 ENV TZ Etc/UTC
-ENV PGID 0
-ENV PUID 0
+ENV PGID 1000
+ENV PUID 1000
 
 # Include Readme and License with each image
 COPY README.md LICENSE.md /
