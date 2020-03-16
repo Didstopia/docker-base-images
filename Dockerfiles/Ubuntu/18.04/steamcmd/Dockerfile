@@ -7,6 +7,9 @@ LABEL maintainer="Didstopia <support@didstopia.com>"
 # Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Define directories to take ownership of
+ENV CHOWN_DIRS "/app,/steamcmd"
+
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

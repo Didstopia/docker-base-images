@@ -3,6 +3,9 @@
 # Enable error handling
 set -e
 
+# Enable debugging
+#set -x
+
 # Set the current timezone
 ln -snf "/usr/share/zoneinfo/${TZ}" "/etc/localtime"
 echo "${TZ}" > "/etc/timezone"
@@ -12,8 +15,10 @@ groupmod --non-unique --gid ${PGID} docker &> /dev/null
 usermod --non-unique --uid ${PUID} docker &> /dev/null
 
 # Set the correct permissions
-#chown -R ${PUID}:${PGID} /app
-chown -R docker:docker /app
+for path in ${CHOWN_DIRS//,/ }
+do
+    chown -R docker:docker "${path}"
+done
 
 # Show a disclaimer
 echo "
