@@ -66,7 +66,7 @@ RUN addgroup \
 	chown -R docker:docker /app
 
 # Expose the /app volume
-VOLUME [ "/app" ]
+#VOLUME [ "/app" ]
 
 # Set default environment variables
 ENV LANGUAGE en_US.UTF-8
@@ -75,6 +75,7 @@ ENV TERM xterm
 ENV TZ Etc/UTC
 ENV PGID 1000
 ENV PUID 1000
+ENV CHOWN_DIRS "/app"
 
 # Include Readme and License with each image
 COPY README.md LICENSE.md /

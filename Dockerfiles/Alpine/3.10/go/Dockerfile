@@ -5,7 +5,10 @@ FROM didstopia/base:alpine-3.10
 LABEL maintainer="Didstopia <support@didstopia.com>"
 
 # Expose an overridable version of Go
-ARG GO_VERSION=1.12.6
+ARG GO_VERSION=1.14
+
+# Define directories to take ownership of
+ENV CHOWN_DIRS "/app,/go"
 
 # Install temporary build deps for Go
 RUN apk update && \

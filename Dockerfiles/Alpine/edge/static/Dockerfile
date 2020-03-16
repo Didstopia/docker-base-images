@@ -4,6 +4,9 @@ FROM didstopia/base:alpine-edge
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
 
+# Define directories to take ownership of
+ENV CHOWN_DIRS "/app,/var/lib/nginx"
+
 # Install nginx
 RUN apk --no-cache add \
 		nginx

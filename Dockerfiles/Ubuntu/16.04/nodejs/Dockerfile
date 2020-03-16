@@ -10,6 +10,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Default Node.js version
 ARG NODE_VERSION=10
 
+# Define directories to take ownership of
+ENV CHOWN_DIRS "/app"
+
 # Install dependencies and verify that Node.js is working
 RUN curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - && \
     apt-get update && \
