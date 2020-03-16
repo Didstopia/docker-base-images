@@ -14,6 +14,9 @@ echo "${TZ}" > "/etc/timezone"
 groupmod --non-unique --gid ${PGID} docker &> /dev/null
 usermod --non-unique --uid ${PUID} docker &> /dev/null
 
+# Add the user to the tty group (fixes permission issues with /dev/std* etc.)
+usermod -a -G tty docker &> /dev/null
+
 # Set the correct permissions
 for path in ${CHOWN_DIRS//,/ }
 do
