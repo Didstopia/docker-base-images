@@ -1,4 +1,8 @@
 # Base images for Docker that are always up to date
+[![Docker Automated build](https://img.shields.io/docker/automated/didstopia/base.svg)](https://hub.docker.com/r/didstopia/base/)
+[![Docker build status](https://img.shields.io/docker/build/didstopia/base.svg)](https://hub.docker.com/r/didstopia/base/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/didstopia/base.svg)](https://hub.docker.com/r/didstopia/base/)
+[![Docker stars](https://img.shields.io/docker/stars/didstopia/base.svg)](https://hub.docker.com/r/didstopia/base)
 
 [![Build Status](https://travis-ci.org/Didstopia/docker-base-images.svg?branch=master)](https://travis-ci.org/Didstopia/docker-base-images)
 
