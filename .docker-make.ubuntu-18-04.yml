@@ -124,3 +124,24 @@ builds:
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
       - "org.label-schema.vcs-ref={fcommitid}"
       - "org.label-schema.schema-version=1.0"
+
+  ghrunner-ubuntu-18.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/18.04/ghrunner/Dockerfile
+    buildargs:
+      - GH_RUNNER_VERSION=2.267.1
+      - GIT_VERSION=2.27.0
+      - DOCKER_COMPOSE_VERSION=1.26.2
+    depends_on:
+      - ubuntu-18.04
+    pushes:
+      - "on_branch:master=didstopia/base:ghrunner-ubuntu-18.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for self-hosted GitHub Actions CI runner."
+      - "org.label-schema.version=ghrunner-ubuntu-18.04"
+      - "org.label-schema.description=An always up to date base image for self-hosted GitHub Actions CI runner."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"

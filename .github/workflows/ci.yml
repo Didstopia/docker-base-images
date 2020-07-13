@@ -1,0 +1,48 @@
+name: Build and update base images
+
+on:
+  push:
+    branches:
+      - master
+      - development
+  pull_request:
+    branches:
+      - master
+      - development
+  schedule:
+   - cron: 0 0 * * * # Schedule nightly builds
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Setup the environment
+        run: |
+          export GITHUB_BRANCH=${GITHUB_REF##*/}
+          echo "::set-env name=GITHUB_BRANCH::${GITHUB_BRANCH}"
+
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
+          echo "::set-env name=GITHUB_PULL_REQUEST::${GITHUB_PULL_REQUEST}"
+      - name: Setup the base images
+        run: .ci/setup.sh
+      - name: Check for base image updates
+        run: |
+          source .ci/update_check.sh
+
+          echo "::set-env name=UPDATE_UBUNTU_16_04::${UPDATE_UBUNTU_16_04}"
+          echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
+          echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
+          echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
+          echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
+      - name: Build the base images
+        run: .ci/build.sh
+      - name: Test the base images
+        run: .ci/test.sh
+      - name: Push the base images
+        run: .ci/push.sh

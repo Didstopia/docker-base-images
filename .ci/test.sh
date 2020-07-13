@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Catch errors
 set -e
 set -o pipefail
 
-# Switch to Travis build directory (if available)
-if [[ ! -z "${TRAVIS_BUILD_DIR}" ]]; then
-    cd "${TRAVIS_BUILD_DIR}"
+# Switch to build directory (if available)
+if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
+    cd "${GITHUB_WORKSPACE}"
 # Otherwise switch to root
 else
     cd "${0%/*}/../"
 fi
 
 # Check if this is a pull request
-if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
+if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
     echo ""
     echo "NOTICE: Pull request detected, testing all images.."
     UPDATE_UBUNTU_16_04=1
@@ -21,7 +21,7 @@ if [[ ! -z ${TRAVIS_PULL_REQUEST+x} && "${TRAVIS_PULL_REQUEST}" != "false" ]]; t
     UPDATE_ALPINE_3_5=1
     UPDATE_ALPINE_3_10=1
     UPDATE_ALPINE_EDGE=1
-elif [[ ! -z ${TRAVIS_BRANCH+x} && "${TRAVIS_BRANCH}" != "master" ]]; then
+elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
     echo ""
     echo "NOTICE: Branch is not 'master', testing all images.."
     UPDATE_UBUNTU_16_04=1
