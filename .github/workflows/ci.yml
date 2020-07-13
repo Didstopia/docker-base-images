@@ -15,30 +15,23 @@ jobs:
     name: CI
     runs-on: ubuntu-latest
     env:
-      # GITHUB_BRANCH: ${{ github.head_ref }} 
-      # GITHUB_PULL_REQUEST: ${{ github.event.number }}
-      # TRAVIS_REPO_SLUG: ${{ github.repository }} 
-      # TRAVIS_BRANCH: ${GITHUB_REF##*/}
-      # TRAVIS_PULL_REQUEST: ${{ github.event.number }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
-    ## TODO: If this doesn't work, we probably have to run the scripts in one step?
-    ## FIXME: When "GITHUB_PULL_REQUEST" is empty, it is still detected as a pull request
     - name: Checkout the repository
       uses: actions/checkout@v2
     - name: Build and update base images
       run: |
-        printenv
+        #printenv
         export GITHUB_BRANCH=${GITHUB_REF##*/}
         echo "GitHub Branch: $GITHUB_BRANCH"
         if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
         echo "GitHub Pull Request: $GITHUB_PULL_REQUEST"
         .ci/setup.sh
-        # source .ci/update_check.sh
-        # .ci/build.sh
-        # .ci/test.sh
-        # .ci/push.sh
+        source .ci/update_check.sh
+        .ci/build.sh
+        .ci/test.sh
+        .ci/push.sh
     # - name: Setup the environment
     #   run: .ci/setup.sh
     # - name: Check for updates
