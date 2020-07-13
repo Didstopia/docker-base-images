@@ -9,9 +9,8 @@ on:
     branches:
       - master
       - development
-  ## TODO: Enable this once confirmed working
-  #schedule:
-  #  - cron: 0 0 * * * # Schedule nightly builds
+  schedule:
+   - cron: 0 0 * * * # Schedule nightly builds
 
 jobs:
   ci:
@@ -23,45 +22,27 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
-      - name: Setup the environment (1/2)
+      - name: Setup the environment
         run: |
           export GITHUB_BRANCH=${GITHUB_REF##*/}
-          echo "GitHub Branch: $GITHUB_BRANCH"
           echo "::set-env name=GITHUB_BRANCH::${GITHUB_BRANCH}"
 
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
-          echo "GitHub Pull Request: $GITHUB_PULL_REQUEST"
           echo "::set-env name=GITHUB_PULL_REQUEST::${GITHUB_PULL_REQUEST}"
-      - name: Setup the environment (2/2)
+      - name: Setup the base images
+        run: .ci/setup.sh
+      - name: Check for base image updates
         run: |
-          echo "GITHUB_BRANCH: ${GITHUB_BRANCH}"
-          echo "GITHUB_PULL_REQUEST: ${GITHUB_PULL_REQUEST}"
+          source .ci/update_check.sh
 
-          ## TODO: Remove the "true" after testing the env var exporting
-          # .ci/setup.sh || true
-
-          # echo "::set-env name=UPDATE_UBUNTU_16_04::${UPDATE_UBUNTU_16_04}"
-          # echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
-          # echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
-          # echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
-          # echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
-      - name: Check for updates
-        run: source .ci/update_check.sh
-      ## TODO: Remove this step
-      # - name: Test env
-      #   if: always()
-      #   run: |
-      #     echo "GITHUB_BRANCH: ${GITHUB_BRANCH}"
-      #     echo "GITHUB_PULL_REQUEST: ${GITHUB_PULL_REQUEST}"
-          
-      #     echo "UPDATE_UBUNTU_16_04: ${UPDATE_UBUNTU_16_04}"
-      #     echo "UPDATE_UBUNTU_18_04: ${UPDATE_UBUNTU_18_04}"
-      #     echo "UPDATE_ALPINE_3_5: ${UPDATE_ALPINE_3_5}"
-      #     echo "UPDATE_ALPINE_3_10: ${UPDATE_ALPINE_3_10}"
-      #     echo "UPDATE_ALPINE_EDGE: ${UPDATE_ALPINE_EDGE}"
-      # - name: Build the images
-      #   run: .ci/build.sh
-      # - name: Test the images
-      #   run: .ci/test.sh
-      # - name: Push the images
-      #   run: .ci/push.sh
+          echo "::set-env name=UPDATE_UBUNTU_16_04::${UPDATE_UBUNTU_16_04}"
+          echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
+          echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
+          echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
+          echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
+      - name: Build the base images
+        run: .ci/build.sh
+      - name: Test the base images
+        run: .ci/test.sh
+      - name: Push the base images
+        run: .ci/push.sh
