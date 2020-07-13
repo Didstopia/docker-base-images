@@ -32,7 +32,7 @@ jobs:
         printenv
         export GITHUB_BRANCH=${GITHUB_REF##*/}
         echo "GitHub Branch: $GITHUB_BRANCH"
-        if [ "$GITHUB_EVENT_NAME" == "pull_request"; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
+        if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
         echo "GitHub Pull Request: $GITHUB_PULL_REQUEST"
         .ci/setup.sh
         # source .ci/update_check.sh
