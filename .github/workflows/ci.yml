@@ -15,7 +15,7 @@ jobs:
       GITHUB_PULL_REQUEST: ${{ github.event.number }}
       TRAVIS_REPO_SLUG: ${{ github.repository }} 
       TRAVIS_BRANCH: ${{ github.head_ref }} 
-      TRAVIS_PULL_REQUEST: ${{ github.event.number }
+      TRAVIS_PULL_REQUEST: ${{ github.event.number }}
     steps:
     ## TODO: If this doesn't work, we probably have to run the scripts in one step?
     ## FIXME: When "GITHUB_PULL_REQUEST" is empty, it is still detected as a pull request
