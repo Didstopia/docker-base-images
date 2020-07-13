@@ -1,7 +1,8 @@
 {
     "workbench.colorTheme": "Ayu Dark Bordered",
     "workbench.iconTheme": "ayu",
-    "extensions.autoUpdate": true,
     "editor.wordWrap": "on",
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "workbench.preferredDarkColorTheme": "Ayu Dark Bordered",
+    "workbench.preferredLightColorTheme": "Ayu Mirage Bordered"
 }

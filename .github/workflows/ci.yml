@@ -1,0 +1,29 @@
+name: Build and update base images
+
+on:
+  push:
+    branches:
+    - master
+    - development
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_BRANCH: ${{ github.head_ref }} 
+      GITHUB_PULL_REQUEST: ${{ github.event.number }}
+    steps:
+    ## TODO: If this doesn't work, we probably have to run the scripts in one step?
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+    - name: Setup the environment
+      run: .ci/setup.sh
+    - name: Check for updates
+      run: source .travis/update_check.sh
+    - name: Build the images
+      run: .ci/build.sh
+    - name: Test the images
+      run: .ci/test.sh
+    - name: Push the images
+      run: .ci/push.sh
