@@ -34,27 +34,31 @@ jobs:
           echo "::set-env name=GITHUB_PULL_REQUEST::${GITHUB_PULL_REQUEST}"
       - name: Setup the environment (2/2)
         run: |
-          .ci/setup.sh || true
+          echo "GITHUB_BRANCH: ${GITHUB_BRANCH}"
+          echo "GITHUB_PULL_REQUEST: ${GITHUB_PULL_REQUEST}"
 
-          echo "::set-env name=UPDATE_UBUNTU_16_04::${UPDATE_UBUNTU_16_04}"
-          echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
-          echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
-          echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
-          echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
+          ## TODO: Remove the "true" after testing the env var exporting
+          # .ci/setup.sh || true
+
+          # echo "::set-env name=UPDATE_UBUNTU_16_04::${UPDATE_UBUNTU_16_04}"
+          # echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
+          # echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
+          # echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
+          # echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
       - name: Check for updates
         run: source .ci/update_check.sh
       ## TODO: Remove this step
-      - name: Test env
-        if: always()
-        run: |
-          echo "GITHUB_BRANCH: ${GITHUB_BRANCH}"
-          echo "GITHUB_PULL_REQUEST: ${GITHUB_PULL_REQUEST}"
+      # - name: Test env
+      #   if: always()
+      #   run: |
+      #     echo "GITHUB_BRANCH: ${GITHUB_BRANCH}"
+      #     echo "GITHUB_PULL_REQUEST: ${GITHUB_PULL_REQUEST}"
           
-          echo "UPDATE_UBUNTU_16_04: ${UPDATE_UBUNTU_16_04}"
-          echo "UPDATE_UBUNTU_18_04: ${UPDATE_UBUNTU_18_04}"
-          echo "UPDATE_ALPINE_3_5: ${UPDATE_ALPINE_3_5}"
-          echo "UPDATE_ALPINE_3_10: ${UPDATE_ALPINE_3_10}"
-          echo "UPDATE_ALPINE_EDGE: ${UPDATE_ALPINE_EDGE}"
+      #     echo "UPDATE_UBUNTU_16_04: ${UPDATE_UBUNTU_16_04}"
+      #     echo "UPDATE_UBUNTU_18_04: ${UPDATE_UBUNTU_18_04}"
+      #     echo "UPDATE_ALPINE_3_5: ${UPDATE_ALPINE_3_5}"
+      #     echo "UPDATE_ALPINE_3_10: ${UPDATE_ALPINE_3_10}"
+      #     echo "UPDATE_ALPINE_EDGE: ${UPDATE_ALPINE_EDGE}"
       # - name: Build the images
       #   run: .ci/build.sh
       # - name: Test the images
