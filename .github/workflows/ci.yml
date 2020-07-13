@@ -14,8 +14,10 @@ jobs:
       GITHUB_BRANCH: ${{ github.head_ref }} 
       GITHUB_PULL_REQUEST: ${{ github.event.number }}
       TRAVIS_REPO_SLUG: ${{ github.repository }} 
-      TRAVIS_BRANCH: ${{ github.head_ref }} 
+      TRAVIS_BRANCH: ${GITHUB_REF##*/}
       TRAVIS_PULL_REQUEST: ${{ github.event.number }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
     ## TODO: If this doesn't work, we probably have to run the scripts in one step?
     ## FIXME: When "GITHUB_PULL_REQUEST" is empty, it is still detected as a pull request
@@ -23,6 +25,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Build and update base images
       run: |
+        export GITHUB_BRANCH=${GITHUB_REF##*/}
+        export GITHUB_PULL_REQUEST=
         printenv
         .ci/setup.sh
         # source .ci/update_check.sh

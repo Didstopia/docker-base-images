@@ -4,6 +4,9 @@
 set -e
 set -o pipefail
 
+## TODO: Remove
+set -x
+
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
@@ -32,6 +35,9 @@ if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" = "false" && ! -
         echo ""
     fi
 fi
+
+## TODO: Remove
+exit 0
 
 ## Remove dangling images, just in case
 echo -n "Removing dangling images.."
