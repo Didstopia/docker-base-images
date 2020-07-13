@@ -20,7 +20,7 @@ jobs:
     - name: Setup the environment
       run: .ci/setup.sh
     - name: Check for updates
-      run: source .travis/update_check.sh
+      run: source .ci/update_check.sh
     - name: Build the images
       run: .ci/build.sh
     - name: Test the images
