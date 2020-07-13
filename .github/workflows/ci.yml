@@ -9,8 +9,9 @@ on:
     branches:
       - master
       - development
-  schedule:
-    - cron: 0 0 * * * # Schedule nightly builds
+  ## TODO: Enable this once confirmed working
+  #schedule:
+  #  - cron: 0 0 * * * # Schedule nightly builds
 
 jobs:
   ci:
@@ -22,28 +23,38 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
-      # - name: Build and update base images
-      #   run: |
-      #     #printenv
-      #     export GITHUB_BRANCH=${GITHUB_REF##*/}
-      #     echo "GitHub Branch: $GITHUB_BRANCH"
-      #     if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
-      #     echo "GitHub Pull Request: $GITHUB_PULL_REQUEST"
-      #     .ci/setup.sh
-      #     source .ci/update_check.sh
-      #     .ci/build.sh
-      #     .ci/test.sh
-      #     .ci/push.sh
       - name: Setup the environment (1/2)
         run: |
           export GITHUB_BRANCH=${GITHUB_REF##*/}
           echo "GitHub Branch: $GITHUB_BRANCH"
+          echo "::set-env name=GITHUB_BRANCH::${GITHUB_BRANCH}"
+
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
           echo "GitHub Pull Request: $GITHUB_PULL_REQUEST"
+          echo "::set-env name=GITHUB_PULL_REQUEST::${GITHUB_PULL_REQUEST}"
       - name: Setup the environment (2/2)
-        run: .ci/setup.sh
-      # - name: Check for updates
-      #   run: source .ci/update_check.sh
+        run: |
+          .ci/setup.sh || true
+
+          echo "::set-env name=UPDATE_UBUNTU_16_04::${UPDATE_UBUNTU_16_04}"
+          echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
+          echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
+          echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
+          echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
+      - name: Check for updates
+        run: source .ci/update_check.sh
+      ## TODO: Remove this step
+      - name: Test env
+        if: always()
+        run: |
+          echo "GITHUB_BRANCH: ${GITHUB_BRANCH}"
+          echo "GITHUB_PULL_REQUEST: ${GITHUB_PULL_REQUEST}"
+          
+          echo "UPDATE_UBUNTU_16_04: ${UPDATE_UBUNTU_16_04}"
+          echo "UPDATE_UBUNTU_18_04: ${UPDATE_UBUNTU_18_04}"
+          echo "UPDATE_ALPINE_3_5: ${UPDATE_ALPINE_3_5}"
+          echo "UPDATE_ALPINE_3_10: ${UPDATE_ALPINE_3_10}"
+          echo "UPDATE_ALPINE_EDGE: ${UPDATE_ALPINE_EDGE}"
       # - name: Build the images
       #   run: .ci/build.sh
       # - name: Test the images
