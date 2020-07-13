@@ -13,17 +13,29 @@ jobs:
     env:
       GITHUB_BRANCH: ${{ github.head_ref }} 
       GITHUB_PULL_REQUEST: ${{ github.event.number }}
+      TRAVIS_REPO_SLUG: ${{ github.repository }} 
+      TRAVIS_BRANCH: ${{ github.head_ref }} 
+      TRAVIS_PULL_REQUEST: ${{ github.event.number }
     steps:
     ## TODO: If this doesn't work, we probably have to run the scripts in one step?
+    ## FIXME: When "GITHUB_PULL_REQUEST" is empty, it is still detected as a pull request
     - name: Checkout the repository
       uses: actions/checkout@v2
-    - name: Setup the environment
-      run: .ci/setup.sh
-    - name: Check for updates
-      run: source .ci/update_check.sh
-    - name: Build the images
-      run: .ci/build.sh
-    - name: Test the images
-      run: .ci/test.sh
-    - name: Push the images
-      run: .ci/push.sh
+    - name: Build and update base images
+      run: |
+        printenv
+        .ci/setup.sh
+        # source .ci/update_check.sh
+        # .ci/build.sh
+        # .ci/test.sh
+        # .ci/push.sh
+    # - name: Setup the environment
+    #   run: .ci/setup.sh
+    # - name: Check for updates
+    #   run: source .ci/update_check.sh
+    # - name: Build the images
+    #   run: .ci/build.sh
+    # - name: Test the images
+    #   run: .ci/test.sh
+    # - name: Push the images
+    #   run: .ci/push.sh
