@@ -4,8 +4,6 @@
 set -e
 set -o pipefail
 
-set -x
-
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
@@ -39,7 +37,7 @@ else
     echo ""
     echo "  * Ubuntu 16.04"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:ubuntu-16.04 bash -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
+    if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:ubuntu-16.04 -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
     then
         echo -n "updates available"
         echo ""
@@ -52,7 +50,7 @@ else
     echo ""
     echo "  * Ubuntu 18.04"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:ubuntu-18.04 bash -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
+    if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:ubuntu-18.04 -c "apt-get update > /dev/null && apt-get --just-print upgrade | grep \"Inst \"" | grep "Inst " > /dev/null
     then
         echo -n "updates available"
         echo ""
@@ -65,7 +63,7 @@ else
     echo ""
     echo "  * Alpine 3.5"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.5 /bin/bash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:alpine-3.5 -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
     then
         echo -n "updates available"
         echo ""
@@ -78,7 +76,7 @@ else
     echo ""
     echo "  * Alpine 3.10"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.10 /bin/bash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:alpine-3.10 -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
     then
         echo -n "updates available"
         echo ""
@@ -91,7 +89,7 @@ else
     echo ""
     echo "  * Alpine Edge"
     echo -n "    > Checking for updates.. "
-    if docker run --name test -it --rm didstopia/base:alpine-edge /bin/bash -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:alpine-edge -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
     then
         echo -n "updates available"
         echo ""

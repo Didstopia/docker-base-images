@@ -4,8 +4,6 @@
 set -e
 set -o pipefail
 
-set -x
-
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"

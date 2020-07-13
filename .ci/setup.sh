@@ -72,6 +72,10 @@ echo -n "    > nodejs-12-steamcmd-ubuntu-16.04.. "
 docker pull didstopia/base:nodejs-12-steamcmd-ubuntu-16.04 > /dev/null
 echo -n "done"
 echo ""
+echo -n "    > ghrunner-ubuntu-16.04.. "
+docker pull didstopia/base:ghrunner-ubuntu-16.04 > /dev/null
+echo -n "done"
+echo ""
 
 # Ubuntu 18.04
 echo ""
@@ -98,6 +102,10 @@ echo -n "done"
 echo ""
 echo -n "    > nodejs-12-steamcmd-ubuntu-18.04.. "
 docker pull didstopia/base:nodejs-12-steamcmd-ubuntu-18.04 > /dev/null
+echo -n "done"
+echo ""
+echo -n "    > ghrunner-ubuntu-18.04.. "
+docker pull didstopia/base:ghrunner-ubuntu-18.04 > /dev/null
 echo -n "done"
 echo ""
 

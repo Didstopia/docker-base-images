@@ -20,7 +20,7 @@ usermod -a -G tty docker &> /dev/null
 # Set the correct permissions
 for path in ${CHOWN_DIRS//,/ }
 do
-    chown -R docker:docker "${path}"
+  chown -R docker:docker "${path}"
 done
 
 # Show a disclaimer
