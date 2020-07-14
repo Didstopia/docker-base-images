@@ -24,6 +24,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup the environment
         run: |
+          which unbuffer
+          unbuffer
+          exit 1
+
           export GITHUB_BRANCH=${GITHUB_REF##*/}
           echo "::set-env name=GITHUB_BRANCH::${GITHUB_BRANCH}"
 
@@ -43,6 +47,6 @@ jobs:
       - name: Build the base images
         run: .ci/build.sh
       - name: Test the base images
-        run: .ci/test.sh
+        run: unbuffer .ci/test.sh
       - name: Push the base images
         run: .ci/push.sh
