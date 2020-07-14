@@ -60,6 +60,7 @@ RUN apt-get update && \
         wget \
         curl \
         git \
+        sudo \
         bsdtar && \
     apt-get upgrade -y && \
     apt-get dist-upgrade -y && \
@@ -82,9 +83,10 @@ RUN groupadd \
         --home /app \
         --uid 1000 \
         --gid 1000 \
-        --groups docker,users,staff \
+        --groups docker,users,staff,sudo \
         --shell /bin/false \
         docker && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     mkdir -p /app && \
 	chown -R docker:docker /app
 
