@@ -44,6 +44,7 @@ RUN apt-get update  \
     libcurl4-openssl-dev \
     inetutils-ping \
     jq \
+    expect \
   && rm -rf /var/lib/apt/lists/* \
   && c_rehash \
   && cd /tmp \

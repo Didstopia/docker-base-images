@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get install -y expect
       - name: Setup the environment
         run: |
           export GITHUB_BRANCH=${GITHUB_REF##*/}
@@ -43,6 +45,6 @@ jobs:
       - name: Build the base images
         run: .ci/build.sh
       - name: Test the base images
-        run: .ci/test.sh
+        run: unbuffer .ci/test.sh
       - name: Push the base images
         run: .ci/push.sh
