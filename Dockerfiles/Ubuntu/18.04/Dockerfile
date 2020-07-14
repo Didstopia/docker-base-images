@@ -60,6 +60,7 @@ RUN apt-get update && \
         wget \
         curl \
         git \
+        sudo \
         bsdtar && \
     apt-get upgrade -y && \
     apt-get dist-upgrade -y && \

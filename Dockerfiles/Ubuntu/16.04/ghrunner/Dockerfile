@@ -12,6 +12,10 @@ SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 # Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Run as root by default
+ENV PGID 0
+ENV PUID 0
+
 # Default ghrunner version and platform
 ARG GH_RUNNER_VERSION="2.267.1"
 ARG GH_RUNNER_PLATFORM
@@ -24,6 +28,10 @@ ARG DOCKER_COMPOSE_VERSION="1.26.2"
 
 # Define directories to take ownership of
 ENV CHOWN_DIRS "/app"
+
+# Elevate the default "docker" user's permissions and enable passwordless sudo
+RUN usermod -a -G sudo docker && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Install various dependencies for build environments
 RUN apt-get update  \
