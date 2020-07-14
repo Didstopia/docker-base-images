@@ -17,6 +17,15 @@ usermod --non-unique --uid ${PUID} docker &> /dev/null
 # Add the user to the tty group (fixes permission issues with /dev/std* etc.)
 usermod -a -G tty docker &> /dev/null
 
+## TODO: This will only work for Ubuntu based images as is, so Alpine is not yet supported
+# Check if we should enable passwordless sudo
+if [ "${ENABLE_PASSWORDLESS_SUDO}" == "true"]; then
+  if ! groups docker | grep -q '\bsudo\b'; then
+    usermod -a -G sudo docker &> /dev/null
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+  fi
+fi
+
 # Set the correct permissions
 for path in ${CHOWN_DIRS//,/ }
 do

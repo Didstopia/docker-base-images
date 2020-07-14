@@ -13,8 +13,8 @@ SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Run as root by default
-ENV PGID 0
-ENV PUID 0
+#ENV PGID 0
+#ENV PUID 0
 
 # Default ghrunner version and platform
 ARG GH_RUNNER_VERSION="2.267.1"
@@ -26,12 +26,11 @@ ARG GIT_VERSION="2.27.0"
 # Default Docker Compose version
 ARG DOCKER_COMPOSE_VERSION="1.26.2"
 
+# Enable passwordless sudo
+ENV ENABLE_PASSWORDLESS_SUDO "true"
+
 # Define directories to take ownership of
 ENV CHOWN_DIRS "/app"
-
-# Elevate the default "docker" user's permissions and enable passwordless sudo
-RUN usermod -a -G sudo docker && \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Install various dependencies for build environments
 RUN apt-get update  \
@@ -42,7 +41,6 @@ RUN apt-get update  \
     tar \
     apt-transport-https \
     ca-certificates \
-    sudo \
     gnupg-agent \
     software-properties-common \
     build-essential \
@@ -67,7 +65,7 @@ RUN apt-get update  \
 
 # Install Docker support
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-  && [[ $(lsb_release -cs) == "eoan" ]] && ( add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu disco stable" ) || ( add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" )\
+  && [[ $(lsb_release -cs) == "eoan" ]] && ( add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu bionic stable" ) || ( add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" )\
   && apt-get update \
   && apt-get install -y docker-ce docker-ce-cli containerd.io --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*

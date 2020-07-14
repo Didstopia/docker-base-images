@@ -77,6 +77,7 @@ ENV TZ Etc/UTC
 ENV PGID 1000
 ENV PUID 1000
 ENV CHOWN_DIRS "/app"
+ENV ENABLE_PASSWORDLESS_SUDO "false"
 
 # Include Readme and License with each image
 COPY README.md LICENSE.md /
