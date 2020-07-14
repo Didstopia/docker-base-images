@@ -22,12 +22,10 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get install -y unbuffer
       - name: Setup the environment
         run: |
-          which unbuffer
-          unbuffer
-          exit 1
-
           export GITHUB_BRANCH=${GITHUB_REF##*/}
           echo "::set-env name=GITHUB_BRANCH::${GITHUB_BRANCH}"
 
