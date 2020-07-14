@@ -12,6 +12,10 @@ SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 # Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Run as root by default
+ENV PGID 0
+ENV PUID 0
+
 # Default ghrunner version and platform
 ARG GH_RUNNER_VERSION="2.267.1"
 ARG GH_RUNNER_PLATFORM
