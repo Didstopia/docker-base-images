@@ -12,24 +12,27 @@ else
     cd "${0%/*}/../"
 fi
 
+## TODO: Why would be always test all images on PRs and non-master branches?
 # Check if this is a pull request
-if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
-    echo ""
-    echo "NOTICE: Pull request detected, testing all images.."
-    UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_18_04=1
-    UPDATE_ALPINE_3_5=1
-    UPDATE_ALPINE_3_10=1
-    UPDATE_ALPINE_EDGE=1
-elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
-    echo ""
-    echo "NOTICE: Branch is not 'master', testing all images.."
-    UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_18_04=1
-    UPDATE_ALPINE_3_5=1
-    UPDATE_ALPINE_3_10=1
-    UPDATE_ALPINE_EDGE=1
-fi
+# if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
+#     echo ""
+#     echo "NOTICE: Pull request detected, testing all images.."
+#     UPDATE_UBUNTU_16_04=1
+#     UPDATE_UBUNTU_18_04=1
+#     UPDATE_ALPINE_3_5=1
+#     UPDATE_ALPINE_3_10=1
+#     UPDATE_ALPINE_3_12=1
+#     UPDATE_ALPINE_EDGE=1
+# elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
+#     echo ""
+#     echo "NOTICE: Branch is not 'master', testing all images.."
+#     UPDATE_UBUNTU_16_04=1
+#     UPDATE_UBUNTU_18_04=1
+#     UPDATE_ALPINE_3_5=1
+#     UPDATE_ALPINE_3_10=1
+#     UPDATE_ALPINE_3_12=1
+#     UPDATE_ALPINE_EDGE=1
+# fi
 
 # Environment variables
 TEST_SUCCESS=1
@@ -92,6 +95,22 @@ echo "  * Alpine 3.10"
 if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
     echo -n "    > Testing.. "
     if docker run --name test -it --rm didstopia/base:alpine-3.10 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    then
+        echo -n "passed"
+    else
+        echo -n "failed"
+        TEST_SUCCESS=0
+    fi
+else
+    echo -n "    > No testing necessary, skipping.."
+fi
+echo ""
+
+echo ""
+echo "  * Alpine 3.12"
+if [ "$UPDATE_ALPINE_3_12" == "1" ]; then
+    echo -n "    > Testing.. "
+    if docker run --name test -it --rm didstopia/base:alpine-3.12 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else

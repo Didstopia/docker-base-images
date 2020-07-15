@@ -41,6 +41,7 @@ jobs:
           echo "::set-env name=UPDATE_UBUNTU_18_04::${UPDATE_UBUNTU_18_04}"
           echo "::set-env name=UPDATE_ALPINE_3_5::${UPDATE_ALPINE_3_5}"
           echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_10}"
+          echo "::set-env name=UPDATE_ALPINE_3_10::${UPDATE_ALPINE_3_12}"
           echo "::set-env name=UPDATE_ALPINE_EDGE::${UPDATE_ALPINE_EDGE}"
       - name: Build the base images
         run: .ci/build.sh

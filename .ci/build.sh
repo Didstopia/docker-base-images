@@ -12,24 +12,27 @@ else
     cd "${0%/*}/../"
 fi
 
+## TODO: Why would be always build all images on PRs and non-master branches?
 # Check if this is a pull request
-if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
-    echo ""
-    echo "NOTICE: Pull request detected, building all images.."
-    UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_18_04=1
-    UPDATE_ALPINE_3_5=1
-    UPDATE_ALPINE_3_10=1
-    UPDATE_ALPINE_EDGE=1
-elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
-    echo ""
-    echo "NOTICE: Branch is not 'master', building all images.."
-    UPDATE_UBUNTU_16_04=1
-    UPDATE_UBUNTU_18_04=1
-    UPDATE_ALPINE_3_5=1
-    UPDATE_ALPINE_3_10=1
-    UPDATE_ALPINE_EDGE=1
-fi
+# if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
+#     echo ""
+#     echo "NOTICE: Pull request detected, building all images.."
+#     UPDATE_UBUNTU_16_04=1
+#     UPDATE_UBUNTU_18_04=1
+#     UPDATE_ALPINE_3_5=1
+#     UPDATE_ALPINE_3_10=1
+#     UPDATE_ALPINE_3_12=1
+#     UPDATE_ALPINE_EDGE=1
+# elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
+#     echo ""
+#     echo "NOTICE: Branch is not 'master', building all images.."
+#     UPDATE_UBUNTU_16_04=1
+#     UPDATE_UBUNTU_18_04=1
+#     UPDATE_ALPINE_3_5=1
+#     UPDATE_ALPINE_3_10=1
+#     UPDATE_ALPINE_3_12=1
+#     UPDATE_ALPINE_EDGE=1
+# fi
 
 # Build the images
 echo ""
@@ -70,6 +73,16 @@ echo ""
 echo ""
 echo "  * Alpine 3.10"
 if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
+    echo ""
+    eval $(./docker-make.sh --no-push --detailed --file .docker-make.alpine-3-10.yml) >/dev/null 2>&1
+else
+    echo -n "    > No build necessary, skipping.."
+fi
+echo ""
+
+echo ""
+echo "  * Alpine 3.12"
+if [ "$UPDATE_ALPINE_3_12" == "1" ]; then
     echo ""
     eval $(./docker-make.sh --no-push --detailed --file .docker-make.alpine-3-10.yml) >/dev/null 2>&1
 else

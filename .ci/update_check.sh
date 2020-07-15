@@ -27,6 +27,7 @@ else
     UPDATE_UBUNTU_18_04=0
     UPDATE_ALPINE_3_5=0
     UPDATE_ALPINE_3_10=0
+    UPDATE_ALPINE_3_12=0
     UPDATE_ALPINE_EDGE=0
 
     # Check each image for updates and set an environment
@@ -87,6 +88,19 @@ else
     fi
 
     echo ""
+    echo "  * Alpine 3.12"
+    echo -n "    > Checking for updates.. "
+    if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:alpine-3.12 -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
+    then
+        echo -n "updates available"
+        echo ""
+        UPDATE_ALPINE_3_12=1
+    else
+        echo -n "no updates available"
+        echo ""
+    fi
+
+    echo ""
     echo "  * Alpine Edge"
     echo -n "    > Checking for updates.. "
     if docker run --name test -it --rm --entrypoint="/bin/bash" didstopia/base:alpine-edge -c "apk update > /dev/null && apk upgrade | grep \"Upgrading \"" | grep "Upgrading " > /dev/null
@@ -105,6 +119,7 @@ else
     export UPDATE_UBUNTU_18_04
     export UPDATE_ALPINE_3_5
     export UPDATE_ALPINE_3_10
+    export UPDATE_ALPINE_3_12
     export UPDATE_ALPINE_EDGE
     echo -n "done"
     echo ""
