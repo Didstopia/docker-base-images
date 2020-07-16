@@ -17,7 +17,7 @@ RUN apk --no-cache add \
     libc6-compat \
     linux-headers \
     binutils-gold \
-    python && \
+    python3 && \
     node -v && npm -v
 
 # Update npm to the latest version
