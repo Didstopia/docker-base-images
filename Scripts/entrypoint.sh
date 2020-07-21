@@ -19,7 +19,7 @@ usermod -a -G tty docker &> /dev/null
 
 ## TODO: This will only work for Ubuntu based images as is, so Alpine is not yet supported
 # Check if we should enable passwordless sudo
-if [ "${ENABLE_PASSWORDLESS_SUDO}" == "true"]; then
+if [ "${ENABLE_PASSWORDLESS_SUDO}" = "true" ]; then
   if ! groups docker | grep -q '\bsudo\b'; then
     usermod -a -G sudo docker &> /dev/null
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
