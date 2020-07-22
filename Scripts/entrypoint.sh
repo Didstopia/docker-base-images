@@ -4,7 +4,7 @@
 set -e
 
 # Enable debugging
-#set -x
+# set -x
 
 # Set the current timezone
 ln -snf "/usr/share/zoneinfo/${TZ}" "/etc/localtime"
@@ -18,11 +18,24 @@ usermod --non-unique --uid ${PUID} docker &> /dev/null
 usermod -a -G tty docker &> /dev/null
 
 ## TODO: This will only work for Ubuntu based images as is, so Alpine is not yet supported
+## TODO: This should also disable passwordless sudo, if it's already been enabled before
 # Check if we should enable passwordless sudo
 if [ "${ENABLE_PASSWORDLESS_SUDO}" = "true" ]; then
-  if ! groups docker | grep -q '\bsudo\b'; then
+  # Add the user to the sudo group
+  if ! groups docker | grep -q "\bsudo\b"; then
     usermod -a -G sudo docker &> /dev/null
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+  fi
+
+  # Allow sudo group uses to run sudo without specifying a password
+  sed -i /etc/sudoers -re 's/^%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD: ALL/g'
+
+  # Handle Docker socket permissions if necessary
+  DOCKER_SOCKET=/var/run/docker.sock
+  if [ -S ${DOCKER_SOCKET} ]; then
+    DOCKER_GID=$(stat -c '%g' ${DOCKER_SOCKET})
+    if ! groups docker | grep -q "\b${DOCKER_GID}\b"; then
+      usermod -a -G ${DOCKER_GID} docker &> /dev/null
+    fi
   fi
 fi
 
