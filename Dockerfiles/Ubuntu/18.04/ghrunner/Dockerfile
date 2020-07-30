@@ -6,6 +6,9 @@ FROM didstopia/base:ubuntu-18.04
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
 
+# Enable Watchtower support
+LABEL com.centurylinklabs.watchtower.enable="true"
+
 # Override the default shell
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
