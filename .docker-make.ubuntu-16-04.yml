@@ -129,7 +129,7 @@ builds:
     context: /
     dockerfile: Dockerfiles/Ubuntu/16.04/ghrunner/Dockerfile
     buildargs:
-      - GH_RUNNER_VERSION=2.267.1
+      - GH_RUNNER_VERSION=2.272.0
       - GIT_VERSION=2.27.0
       - DOCKER_COMPOSE_VERSION=1.26.2
     depends_on:
