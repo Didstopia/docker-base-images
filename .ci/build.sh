@@ -15,31 +15,31 @@ else
     cd "${0%/*}/../"
 fi
 
-## TODO: Why would be always build all images on PRs and non-master branches?
-# Check if this is a pull request
-# if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
-#     echo ""
-#     echo "NOTICE: Pull request detected, building all images.."
-#     UPDATE_UBUNTU_16_04=1
-#     UPDATE_UBUNTU_18_04=1
-#     UPDATE_UBUNTU_20_04=1
-#     UPDATE_ALPINE_3_5=1
-#     UPDATE_ALPINE_3_10=1
-#     UPDATE_ALPINE_3_12=1
-#     UPDATE_ALPINE_3_14=1
-#     UPDATE_ALPINE_EDGE=1
-# elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
-#     echo ""
-#     echo "NOTICE: Branch is not 'master', building all images.."
-#     UPDATE_UBUNTU_16_04=1
-#     UPDATE_UBUNTU_18_04=1
-#     UPDATE_UBUNTU_20_04=1
-#     UPDATE_ALPINE_3_5=1
-#     UPDATE_ALPINE_3_10=1
-#     UPDATE_ALPINE_3_12=1
-#     UPDATE_ALPINE_3_14=1
-#     UPDATE_ALPINE_EDGE=1
-# fi
+# When running from a pull request or pushing to a non-master branch,
+# force updates to all images, so we can build and test each build/image
+if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
+    echo ""
+    echo "NOTICE: Pull request detected, building all images.."
+    UPDATE_UBUNTU_16_04=1
+    UPDATE_UBUNTU_18_04=1
+    UPDATE_UBUNTU_20_04=1
+    UPDATE_ALPINE_3_5=1
+    UPDATE_ALPINE_3_10=1
+    UPDATE_ALPINE_3_12=1
+    UPDATE_ALPINE_3_14=1
+    UPDATE_ALPINE_EDGE=1
+elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
+    echo ""
+    echo "NOTICE: Branch is not 'master', building all images.."
+    UPDATE_UBUNTU_16_04=1
+    UPDATE_UBUNTU_18_04=1
+    UPDATE_UBUNTU_20_04=1
+    UPDATE_ALPINE_3_5=1
+    UPDATE_ALPINE_3_10=1
+    UPDATE_ALPINE_3_12=1
+    UPDATE_ALPINE_3_14=1
+    UPDATE_ALPINE_EDGE=1
+fi
 
 # Build the images
 echo ""
