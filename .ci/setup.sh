@@ -31,6 +31,12 @@ if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" = "false" && ! -
         docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
         echo ""
     fi
+
+    # Ensure that the Docker configuration file exists
+    if [[ ! -f "${HOME}/.docker/config.json" ]]; then
+        echo "ERROR: Docker configuration file missing from ${HOME}/.docker/config.json"
+        exit 1
+    fi
 fi
 
 ## Remove dangling images, just in case
