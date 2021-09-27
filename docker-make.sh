@@ -21,23 +21,28 @@ fi
 # Create a temporary custom Docker configuration file with the credentials embedded,
 # otherwise docker-make will refuse to work correctly, as it needs permissions to push
 dockercfg=$(mktemp /tmp/dockercfg.XXXXX)
-storetype=$(jq -r .credsStore < ~/.docker/config.json)
-(
-    echo '{'
-    echo '    "auths": {'
-    for registry in $(docker-credential-$storetype list | jq -r 'to_entries[] | .key'); do
-        if [ ! -z $FIRST ]; then
-            echo '        },'
-        fi
-        FIRST=true
-        credential=$(echo $registry | docker-credential-$storetype get | jq -jr '"\(.Username):\(.Secret)"' | base64)
-        echo '        "'$registry'": {'
-        echo '            "auth": "'$credential'"'
-    done
-    echo '        }'
-    echo '    }'
-    echo '}'
-) > $dockercfg
+if grep -q credsStore "~/.docker/config.json"; then
+    echo "Customizing Docker credentials for docker-make"
+    storetype=$(jq -r .credsStore < ~/.docker/config.json)
+    (
+        echo '{'
+        echo '    "auths": {'
+        for registry in $(docker-credential-$storetype list | jq -r 'to_entries[] | .key'); do
+            if [ ! -z $FIRST ]; then
+                echo '        },'
+            fi
+            FIRST=true
+            credential=$(echo $registry | docker-credential-$storetype get | jq -jr '"\(.Username):\(.Secret)"' | base64)
+            echo '        "'$registry'": {'
+            echo '            "auth": "'$credential'"'
+        done
+        echo '        }'
+        echo '    }'
+        echo '}'
+    ) > $dockercfg
+else
+    echo "Skipping Docker credentials customization for docker-make"
+fi
 
 # Pull the latest version of docker-make
 docker pull didstopia/docker-make:latest
