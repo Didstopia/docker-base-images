@@ -51,6 +51,16 @@ else
     echo ""
 
     echo ""
+    echo "  * Ubuntu 20.04"
+    if [ "$UPDATE_UBUNTU_20_04" == "1" ]; then
+        echo ""
+        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-20-04.yml) >/dev/null 2>&1
+    else
+        echo -n "    > No update necessary, skipping.."
+    fi
+    echo ""
+
+    echo ""
     echo "  * Alpine 3.5"
     if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
         echo ""
@@ -75,6 +85,16 @@ else
     if [ "$UPDATE_ALPINE_3_12" == "1" ]; then
         echo ""
         eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-12.yml) >/dev/null 2>&1
+    else
+        echo -n "    > No update necessary, skipping.."
+    fi
+    echo ""
+
+    echo ""
+    echo "  * Alpine 3.14"
+    if [ "$UPDATE_ALPINE_3_14" == "1" ]; then
+        echo ""
+        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-14.yml) >/dev/null 2>&1
     else
         echo -n "    > No update necessary, skipping.."
     fi

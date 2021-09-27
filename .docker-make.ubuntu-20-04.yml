@@ -1,0 +1,109 @@
+builds:
+
+  ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/Dockerfile
+    pushes:
+      - "on_branch:master=didstopia/base:ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Ubuntu."
+      - "org.label-schema.version=ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for Ubuntu."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+
+  static-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/static/Dockerfile
+    depends_on:
+      - ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:static-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for static hosting."
+      - "org.label-schema.version=static-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for static hosting."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+  
+  nodejs-14-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/nodejs/Dockerfile
+    buildargs:
+      - NODE_VERSION=14
+    depends_on:
+      - ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:nodejs-14-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Node.js v14."
+      - "org.label-schema.version=nodejs-14-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for Node.js v14."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+
+  steamcmd-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/steamcmd/Dockerfile
+    depends_on:
+      - ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:steamcmd-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for steamcmd."
+      - "org.label-schema.version=steamcmd-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for steamcmd."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+  
+  nodejs-14-steamcmd-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/nodejs-steamcmd/Dockerfile
+    buildargs:
+      - NODE_VERSION=14
+    depends_on:
+      - steamcmd-ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:nodejs-14-steamcmd-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Node.js v12 and steamcmd."
+      - "org.label-schema.version=nodejs-14-steamcmd-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for Node.js v12 and steamcmd."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+
+  ghrunner-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/ghrunner/Dockerfile
+    buildargs:
+      - GH_RUNNER_VERSION=2.238.1
+      - GIT_VERSION=2.33.0
+      - DOCKER_COMPOSE_VERSION=1.29.2
+    depends_on:
+      - ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:ghrunner-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for self-hosted GitHub Actions CI runner."
+      - "org.label-schema.version=ghrunner-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for self-hosted GitHub Actions CI runner."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
