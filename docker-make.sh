@@ -20,6 +20,7 @@ fi
 
 # Create a temporary custom Docker configuration file with the credentials embedded,
 # otherwise docker-make will refuse to work correctly, as it needs permissions to push
+mkdir ~/.docker && touch ~/.docker/config.json
 dockercfg=$(mktemp /tmp/dockercfg.XXXXX)
 if grep -q credsStore "~/.docker/config.json"; then
     echo "Customizing Docker credentials for docker-make"
