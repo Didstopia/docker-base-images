@@ -49,7 +49,7 @@ echo ""
 echo "  * Ubuntu 16.04"
 if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:ubuntu-16.04 bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:ubuntu-16.04 bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -65,7 +65,7 @@ echo ""
 echo "  * Ubuntu 18.04"
 if [ "$UPDATE_UBUNTU_18_04" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:ubuntu-18.04 bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:ubuntu-18.04 bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -81,7 +81,7 @@ echo ""
 echo "  * Ubuntu 20.04"
 if [ "$UPDATE_UBUNTU_20_04" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:ubuntu-20.04 bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:ubuntu-20.04 bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -97,7 +97,7 @@ echo ""
 echo "  * Alpine 3.5"
 if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.5 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:alpine-3.5 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -113,7 +113,7 @@ echo ""
 echo "  * Alpine 3.10"
 if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.10 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:alpine-3.10 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -129,7 +129,7 @@ echo ""
 echo "  * Alpine 3.12"
 if [ "$UPDATE_ALPINE_3_12" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.12 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:alpine-3.12 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -145,7 +145,7 @@ echo ""
 echo "  * Alpine 3.14"
 if [ "$UPDATE_ALPINE_3_14" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:alpine-3.14 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:alpine-3.14 /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
@@ -161,7 +161,7 @@ echo ""
 echo "  * Alpine edge"
 if [ "$UPDATE_ALPINE_EDGE" == "1" ]; then
     echo -n "    > Testing.. "
-    if docker run --name test -it --rm didstopia/base:alpine-edge /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
+    if docker run --name test it --tty --rm didstopia/base:alpine-edge /bin/bash -c "echo \"This is a simple test.\" | grep \"This is a simple test.\"" | grep "This is a simple test." > /dev/null
     then
         echo -n "passed"
     else
