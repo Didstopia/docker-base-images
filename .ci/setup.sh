@@ -29,6 +29,7 @@ if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" = "false" && ! -
     if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
         echo "Logging in to Docker Hub.."
         docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
+        cat ~/.docker/config.json ## FIXME: REMOVE THIS AFTER TESTING!
         echo ""
     fi
 fi
