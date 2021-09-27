@@ -39,6 +39,9 @@ jobs:
         run: .ci/setup.sh
 
       - name: Check for base image updates
+        ## FIXME: Temporary fix for GH Actions not having a TTY
+        ##        https://github.com/actions/runner/issues/241#issuecomment-924327172
+        shell: 'script --return --quiet --command "bash {0}"'
         run: |
           source .ci/update_check.sh
 
@@ -54,6 +57,9 @@ jobs:
         run: .ci/build.sh
 
       - name: Test the base images
+        ## FIXME: Temporary fix for GH Actions not having a TTY
+        ##        https://github.com/actions/runner/issues/241#issuecomment-924327172
+        shell: 'script --return --quiet --command "bash {0}"'
         run: unbuffer .ci/test.sh
 
       - name: Push the base images
