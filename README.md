@@ -14,12 +14,31 @@ To see all the available images, please go to [this Docker Hub page](https://hub
 
 ## Development
 
+### Basic
+
 Build the images (Alpine used as an example):
 ```sh
 ./docker-make.sh --no-push --remove --detailed --file .docker-make.alpine-3-5.yml
 ```
 
 Check the `.travis` folder for scripts used for checking updates, testing etc.
+
+### Advanced
+
+1. Pull and tag latest images from Docker Hub
+> ./.ci/setup.sh
+
+2. Check for updates to all images (statuses are exported as env vars)
+> source .ci/update_check.sh
+
+3. Build all images that have been marked for updating
+> ./.ci/build.sh
+
+4. Test the base images that they still work (note: requires `expect` to be installed)
+> unbuffer .ci/test.sh
+
+5. Push updated images to Docker Hub
+> ./.ci/push.sh
 
 ## Licenses
 
