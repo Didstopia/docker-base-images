@@ -15,6 +15,9 @@ else
     cd "${0%/*}"
 fi
 
+## FIXME: Only run this if NOT using a CI (CI does not use a credentials helper!)
+##        NOTE: Alternatively setup a credential helper for CI?
+
 # Create a temporary custom Docker configuration file with the credentials embedded,
 # otherwise docker-make will refuse to work correctly, as it needs permissions to push
 dockercfg=$(mktemp /tmp/dockercfg.XXXXX)
