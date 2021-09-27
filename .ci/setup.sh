@@ -131,6 +131,40 @@ docker tag didstopia/base:ghrunner-ubuntu-18.04 ghrunner-ubuntu-18.04
 echo -n "done"
 echo ""
 
+# Ubuntu 20.04
+echo ""
+echo "  * Ubuntu 20.04"
+echo -n "    > ubuntu-20.04.. "
+docker pull didstopia/base:ubuntu-20.04 > /dev/null
+docker tag didstopia/base:ubuntu-20.04 ubuntu-20.04
+echo -n "done"
+echo ""
+echo -n "    > static-ubuntu-20.04.. "
+docker pull didstopia/base:static-ubuntu-20.04 > /dev/null
+docker tag didstopia/base:static-ubuntu-20.04 static-ubuntu-20.04
+echo -n "done"
+echo ""
+echo -n "    > nodejs-14-ubuntu-20.04.. "
+docker pull didstopia/base:nodejs-14-ubuntu-20.04 > /dev/null
+docker tag didstopia/base:nodejs-14-ubuntu-20.04 nodejs-14-ubuntu-20.04
+echo -n "done"
+echo ""
+echo -n "    > steamcmd-ubuntu-20.04.. "
+docker pull didstopia/base:steamcmd-ubuntu-20.04 > /dev/null
+docker tag didstopia/base:steamcmd-ubuntu-20.04 steamcmd-ubuntu-20.04
+echo -n "done"
+echo ""
+echo -n "    > nodejs-14-steamcmd-ubuntu-20.04.. "
+docker pull didstopia/base:nodejs-14-steamcmd-ubuntu-20.04 > /dev/null
+docker tag didstopia/base:nodejs-14-steamcmd-ubuntu-20.04 nodejs-14-steamcmd-ubuntu-20.04
+echo -n "done"
+echo ""
+echo -n "    > ghrunner-ubuntu-20.04.. "
+docker pull didstopia/base:ghrunner-ubuntu-20.04 > /dev/null
+docker tag didstopia/base:ghrunner-ubuntu-20.04 ghrunner-ubuntu-20.04
+echo -n "done"
+echo ""
+
 # Alpine 3.5
 echo ""
 echo "  * Alpine 3.5"
@@ -200,6 +234,30 @@ echo ""
 echo -n "    > go-alpine-3.12.. "
 docker pull didstopia/base:go-alpine-3.12 > /dev/null
 docker tag didstopia/base:go-alpine-3.12 go-alpine-3.12
+echo -n "done"
+echo ""
+
+# Alpine 3.14
+echo ""
+echo "  * Alpine 3.14"
+echo -n "    > alpine-3.14.. "
+docker pull didstopia/base:alpine-3.14 > /dev/null
+docker tag didstopia/base:alpine-3.14 alpine-3.14
+echo -n "done"
+echo ""
+echo -n "    > static-alpine-3.14.. "
+docker pull didstopia/base:static-alpine-3.14 > /dev/null
+docker tag didstopia/base:static-alpine-3.14 static-alpine-3.14
+echo -n "done"
+echo ""
+echo -n "    > nodejs-alpine-3.14.. "
+docker pull didstopia/base:nodejs-alpine-3.14 > /dev/null
+docker tag didstopia/base:nodejs-alpine-3.14 nodejs-alpine-3.14
+echo -n "done"
+echo ""
+echo -n "    > go-alpine-3.14.. "
+docker pull didstopia/base:go-alpine-3.14 > /dev/null
+docker tag didstopia/base:go-alpine-3.14 go-alpine-3.14
 echo -n "done"
 echo ""
 

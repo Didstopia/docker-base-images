@@ -4,11 +4,13 @@
 export RUNNER_ALLOW_RUNASROOT=1
 export PATH=$PATH:/app
 
+## TODO: Test if the runner automatically de-registers itself
+##       now that it has ephemeral support?
 deregister_runner() {
-  echo "Caught SIGTERM. Deregistering runner"
-  _TOKEN=$(bash /token.sh)
-  RUNNER_TOKEN=$(echo "${_TOKEN}" | jq -r .token)
-  ./config.sh remove --token "${RUNNER_TOKEN}"
+  # echo "Caught SIGTERM. Deregistering runner"
+  # _TOKEN=$(bash /token.sh)
+  # RUNNER_TOKEN=$(echo "${_TOKEN}" | jq -r .token)
+  # ./config.sh remove --token "${RUNNER_TOKEN}"
   exit
 }
 
@@ -23,6 +25,7 @@ if [[ -n "${ACCESS_TOKEN}" ]]; then
   _SHORT_URL=$(echo "${_TOKEN}" | jq -r .short_url)
 fi
 
+## TODO: Ensure that these flags still work, but also check if there are new potentialy useful ones?
 echo "Configuring"
 ./config.sh \
   --url "${_SHORT_URL}" \
@@ -36,4 +39,7 @@ echo "Configuring"
 unset RUNNER_TOKEN
 trap deregister_runner SIGINT SIGQUIT SIGTERM
 
-./run.sh --once
+## NOTE: The runner now has full support for ephemeral mode:
+##       https://github.com/actions/runner/releases/tag/v2.283.1
+# ./run.sh --once
+./run.sh --ephemeral

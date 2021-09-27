@@ -1,7 +1,7 @@
 ## Based on https://github.com/myoung34/docker-github-actions-runner/blob/clair/Dockerfile
 
 # Base image
-FROM didstopia/base:ubuntu-18.04
+FROM didstopia/base:ubuntu-20.04
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
@@ -9,8 +9,9 @@ LABEL maintainer="Didstopia <support@didstopia.com>"
 # Enable Watchtower support
 LABEL com.centurylinklabs.watchtower.enable="true"
 
+## TODO: Test that this works, as it should no longer be necessary on Ubuntu 20.04?
 # Override the default shell
-SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
+# SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
 # Disable TTY interaction
 ARG DEBIAN_FRONTEND=noninteractive
