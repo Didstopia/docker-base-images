@@ -18,6 +18,21 @@ fi
 ## FIXME: Only run this if NOT using a CI (CI does not use a credentials helper!)
 ##        NOTE: Alternatively setup a credential helper for CI?
 
+# Login to Docker Hub
+if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
+    echo "Logging in to Docker Hub.."
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
+    echo ""
+fi
+
+# Ensure that the Docker configuration file exists
+if [[ ! -f "${HOME}/.docker/config.json" ]]; then
+    echo "ERROR: Docker configuration file missing from ${HOME}/.docker/config.json"
+    exit 1
+else
+  echo "Docker configuration file exists at ${HOME}/.docker/config.json"
+fi
+
 # Create a temporary custom Docker configuration file with the credentials embedded,
 # otherwise docker-make will refuse to work correctly, as it needs permissions to push
 # mkdir ~/.docker && touch ~/.docker/config.json

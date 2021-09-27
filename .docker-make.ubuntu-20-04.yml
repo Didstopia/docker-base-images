@@ -91,7 +91,7 @@ builds:
     context: /
     dockerfile: Dockerfiles/Ubuntu/20.04/ghrunner/Dockerfile
     buildargs:
-      - GH_RUNNER_VERSION=2.238.1
+      - GH_RUNNER_VERSION=2.283.1
       - GIT_VERSION=2.33.0
       - DOCKER_COMPOSE_VERSION=1.29.2
     depends_on:
