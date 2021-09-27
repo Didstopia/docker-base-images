@@ -1,6 +1,11 @@
 ## Based on https://github.com/myoung34/docker-github-actions-runner/blob/clair/entrypoint.sh
 #!/usr/bin/env bash
 
+set -e
+# set -o pipefail
+
+set -x
+
 export RUNNER_ALLOW_RUNASROOT=1
 export PATH=$PATH:/app
 
@@ -23,6 +28,15 @@ if [[ -n "${ACCESS_TOKEN}" ]]; then
   _TOKEN=$(bash /token.sh)
   RUNNER_TOKEN=$(echo "${_TOKEN}" | jq -r .token)
   _SHORT_URL=$(echo "${_TOKEN}" | jq -r .short_url)
+fi
+
+if [ ! -f /app/config.sh ]; then
+  if [ ! -f /app/install.sh ]; then
+    echo "ERROR: /app/install.sh missing, unable to continue!"
+  else
+    echo "Runner seems to be missing, installing.."
+    /app/install.sh ${GH_RUNNER_VERSION} ${GH_RUNNER_PLATFORM}
+  fi
 fi
 
 ## TODO: Ensure that these flags still work, but also check if there are new potentialy useful ones?

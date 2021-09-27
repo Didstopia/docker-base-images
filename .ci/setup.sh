@@ -36,6 +36,8 @@ if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" = "false" && ! -
     if [[ ! -f "${HOME}/.docker/config.json" ]]; then
         echo "ERROR: Docker configuration file missing from ${HOME}/.docker/config.json"
         exit 1
+    else
+      echo "Docker configuration file exists at ${HOME}/.docker/config.json"
     fi
 fi
 
