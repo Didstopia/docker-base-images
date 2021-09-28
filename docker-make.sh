@@ -7,6 +7,9 @@ trap "rm -f $dockercfg" EXIT
 set -e
 set -o pipefail
 
+## FIXME: Remove after done testing
+set -x
+
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
@@ -14,9 +17,6 @@ if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
 else
     cd "${0%/*}"
 fi
-
-## FIXME: Only run this if NOT using a CI (CI does not use a credentials helper!)
-##        NOTE: Alternatively setup a credential helper for CI?
 
 DOCKER_CONFIG_FILE="${HOME}/.docker/config.json"
 
@@ -37,6 +37,7 @@ fi
 
 # Create a temporary custom Docker configuration file with the credentials embedded,
 # otherwise docker-make will refuse to work correctly, as it needs permissions to push
+DOCKER_CUSTOM_CONFIG="${DOCKER_CONFIG_FILE}"
 if grep -q credsStore "${DOCKER_CONFIG_FILE}"; then
     echo "Customizing Docker credentials for docker-make"
     DOCKER_CUSTOM_CONFIG=$(mktemp /tmp/dockercfg.XXXXX)
@@ -61,10 +62,10 @@ else
     echo "Skipping Docker credentials customization for docker-make"
 fi
 
-if [ ! -z "$DOCKER_CUSTOM_CONFIG" ]; then
-    echo "Using default Docker configuration file"
-    DOCKER_CUSTOM_CONFIG="${DOCKER_CONFIG_FILE}"
-fi
+# if [ ! -z "$DOCKER_CUSTOM_CONFIG" ]; then
+#     echo "Using default Docker configuration file"
+#     DOCKER_CUSTOM_CONFIG="${DOCKER_CONFIG_FILE}"
+# fi
 
 # Pull the latest version of docker-make
 docker pull didstopia/docker-make:latest
