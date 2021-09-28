@@ -47,7 +47,9 @@ else
     echo "  * Ubuntu 18.04"
     if [ "$UPDATE_UBUNTU_18_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml) >/dev/null 2>&1
+        ## FIXME: "eval" is breaking in GitHub Actions for some reason, running directly as a workaround, for now
+        # eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml) >/dev/null 2>&1
+        ./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -57,7 +59,9 @@ else
     echo "  * Ubuntu 20.04"
     if [ "$UPDATE_UBUNTU_20_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-20-04.yml) >/dev/null 2>&1
+        ## FIXME: "eval" is breaking in GitHub Actions for some reason, running directly as a workaround, for now
+        # eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-20-04.yml) >/dev/null 2>&1
+        ./docker-make.sh --detailed --file .docker-make.ubuntu-20-04.yml
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -87,7 +91,9 @@ else
     echo "  * Alpine 3.12"
     if [ "$UPDATE_ALPINE_3_12" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-12.yml) >/dev/null 2>&1
+        ## FIXME: "eval" is breaking in GitHub Actions for some reason, running directly as a workaround, for now
+        # eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-12.yml) >/dev/null 2>&1
+        ./docker-make.sh --detailed --file .docker-make.alpine-3-12.yml
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -97,7 +103,9 @@ else
     echo "  * Alpine 3.14"
     if [ "$UPDATE_ALPINE_3_14" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-14.yml) >/dev/null 2>&1
+        ## FIXME: "eval" is breaking in GitHub Actions for some reason, running directly as a workaround, for now
+        # eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-14.yml) >/dev/null 2>&1
+        ./docker-make.sh --detailed --file .docker-make.alpine-3-14.yml
     else
         echo -n "    > No update necessary, skipping.."
     fi
@@ -107,7 +115,9 @@ else
     echo "  * Alpine Edge"
     if [ "$UPDATE_ALPINE_EDGE" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.alpine-edge.yml) >/dev/null 2>&1
+        ## FIXME: "eval" is breaking in GitHub Actions for some reason, running directly as a workaround, for now
+        # eval $(./docker-make.sh --detailed --file .docker-make.alpine-edge.yml) >/dev/null 2>&1
+        ./docker-make.sh --detailed --file .docker-make.alpine-edge.yml
     else
         echo -n "    > No update necessary, skipping.."
     fi
