@@ -37,4 +37,6 @@ jobs:
 
       - name: Test Docker Build & Push
         run: |
-          ./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml
+          export UPDATE_UBUNTU_18_04=1
+          ./.ci/push.sh
+          # ./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml

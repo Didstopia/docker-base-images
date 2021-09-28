@@ -47,7 +47,8 @@ else
     echo "  * Ubuntu 18.04"
     if [ "$UPDATE_UBUNTU_18_04" == "1" ]; then
         echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml) >/dev/null 2>&1
+        # eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml) >/dev/null 2>&1
+        ./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml
     else
         echo -n "    > No update necessary, skipping.."
     fi
