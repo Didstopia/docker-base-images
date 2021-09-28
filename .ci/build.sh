@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-echo "docker-credential-desktop:"
-which docker-credential-desktop
-
 # Catch errors
 set -e
 set -o pipefail
