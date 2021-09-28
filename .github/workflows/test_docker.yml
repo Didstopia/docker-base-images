@@ -19,11 +19,14 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y expect
 
-      - name: Print Docker Config
-        run: cat $HOME/.docker/config.json || true
+      # - name: Print Docker Config
+      #   run: cat $HOME/.docker/config.json || true
 
       - name: Docker Login
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
       - name: Print Docker Config
         run: cat $HOME/.docker/config.json
+        
+      - name: Test Building
+        run: ./docker-make.sh --no-push --detailed --file .docker-make.ubuntu-18-04.yml
