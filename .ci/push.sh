@@ -4,6 +4,9 @@
 set -e
 set -o pipefail
 
+## FIXME: Remove after done testing
+set -x
+
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
@@ -13,12 +16,12 @@ else
 fi
 
 # Check if this is a pull request
-if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" ]]; then
+if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" != "false" && -z ${ACT+x} ]]; then
     echo ""
     echo "NOTICE: Pull request detected, skipping push.."
     echo ""
 # Check if this is a branch other than master
-elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" ]]; then
+elif [[ ! -z ${GITHUB_BRANCH+x} && "${GITHUB_BRANCH}" != "master" && -z ${ACT+x} ]]; then
     echo ""
     echo "NOTICE: Branch is not 'master', skipping push.."
     echo ""
@@ -30,15 +33,15 @@ else
 
     ## TODO: Figure out how to properly redirect docker-make's output to /dev/null
 
-    echo ""
-    echo "  * Ubuntu 16.04"
-    if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
-        echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
-    else
-        echo -n "    > No update necessary, skipping.."
-    fi
-    echo ""
+    # echo ""
+    # echo "  * Ubuntu 16.04"
+    # if [ "$UPDATE_UBUNTU_16_04" == "1" ]; then
+    #     echo ""
+    #     eval $(./docker-make.sh --detailed --file .docker-make.ubuntu-16-04.yml) >/dev/null 2>&1
+    # else
+    #     echo -n "    > No update necessary, skipping.."
+    # fi
+    # echo ""
 
     echo ""
     echo "  * Ubuntu 18.04"
@@ -60,25 +63,25 @@ else
     fi
     echo ""
 
-    echo ""
-    echo "  * Alpine 3.5"
-    if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
-        echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-5.yml) >/dev/null 2>&1
-    else
-        echo -n "    > No update necessary, skipping.."
-    fi
-    echo ""
+    # echo ""
+    # echo "  * Alpine 3.5"
+    # if [ "$UPDATE_ALPINE_3_5" == "1" ]; then
+    #     echo ""
+    #     eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-5.yml) >/dev/null 2>&1
+    # else
+    #     echo -n "    > No update necessary, skipping.."
+    # fi
+    # echo ""
 
-    echo ""
-    echo "  * Alpine 3.10"
-    if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
-        echo ""
-        eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-10.yml) >/dev/null 2>&1
-    else
-        echo -n "    > No update necessary, skipping.."
-    fi
-    echo ""
+    # echo ""
+    # echo "  * Alpine 3.10"
+    # if [ "$UPDATE_ALPINE_3_10" == "1" ]; then
+    #     echo ""
+    #     eval $(./docker-make.sh --detailed --file .docker-make.alpine-3-10.yml) >/dev/null 2>&1
+    # else
+    #     echo -n "    > No update necessary, skipping.."
+    # fi
+    # echo ""
 
     echo ""
     echo "  * Alpine 3.12"

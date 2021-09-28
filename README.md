@@ -40,6 +40,9 @@ Check the `.travis` folder for scripts used for checking updates, testing etc.
 5. Push updated images to Docker Hub
 > ./.ci/push.sh
 
+Alternatively you can use `act`:
+> act -W .github/workflows/test_docker.yml -s DOCKER_USERNAME=<user> -s DOCKER_PASSWORD=<password> --verbose -P ubuntu-latest=catthehacker/ubuntu:runner-20.04
+
 ## Licenses
 
 This project is provided under the [MIT License](https://github.com/Didstopia/docker-base-images/blob/master/LICENSE.md).

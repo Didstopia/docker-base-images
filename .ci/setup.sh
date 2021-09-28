@@ -41,59 +41,60 @@ if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" = "false" && ! -
     fi
 fi
 
+## TODO: Why were we removing dangling images? Easier if we just leave them alone=
 ## Remove dangling images, just in case
-echo -n "Removing dangling images.."
-docker rmi $(docker images -f dangling=true -q > /dev/null) 2>/dev/null || true
-echo -n " done!"
-echo ""
+# echo -n "Removing dangling images.."
+# docker rmi $(docker images -f dangling=true -q > /dev/null) 2>/dev/null || true
+# echo -n " done!"
+# echo ""
 
 ## Pull latest versions of all images
 echo ""
 echo "Pulling latest images.."
 
 # Ubuntu 16.04
-echo ""
-echo "  * Ubuntu 16.04"
-echo -n "    > ubuntu-16.04.. "
-docker pull didstopia/base:ubuntu-16.04 > /dev/null
-docker tag didstopia/base:ubuntu-16.04 ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > static-ubuntu-16.04.. "
-docker pull didstopia/base:static-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:static-ubuntu-16.04 static-ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > nodejs-10-ubuntu-16.04.. "
-docker pull didstopia/base:nodejs-10-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:nodejs-10-ubuntu-16.04 nodejs-10-ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > nodejs-12-ubuntu-16.04.. "
-docker pull didstopia/base:nodejs-12-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:nodejs-12-ubuntu-16.04 nodejs-12-ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > steamcmd-ubuntu-16.04.. "
-docker pull didstopia/base:steamcmd-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:steamcmd-ubuntu-16.04 steamcmd-ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > nodejs-10-steamcmd-ubuntu-16.04.. "
-docker pull didstopia/base:nodejs-10-steamcmd-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:nodejs-10-steamcmd-ubuntu-16.04 nodejs-10-steamcmd-ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > nodejs-12-steamcmd-ubuntu-16.04.. "
-docker pull didstopia/base:nodejs-12-steamcmd-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:nodejs-12-steamcmd-ubuntu-16.04 nodejs-12-steamcmd-ubuntu-16.04
-echo -n "done"
-echo ""
-echo -n "    > ghrunner-ubuntu-16.04.. "
-docker pull didstopia/base:ghrunner-ubuntu-16.04 > /dev/null
-docker tag didstopia/base:ghrunner-ubuntu-16.04 ghrunner-ubuntu-16.04
-echo -n "done"
-echo ""
+# echo ""
+# echo "  * Ubuntu 16.04"
+# echo -n "    > ubuntu-16.04.. "
+# docker pull didstopia/base:ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:ubuntu-16.04 ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > static-ubuntu-16.04.. "
+# docker pull didstopia/base:static-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:static-ubuntu-16.04 static-ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > nodejs-10-ubuntu-16.04.. "
+# docker pull didstopia/base:nodejs-10-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:nodejs-10-ubuntu-16.04 nodejs-10-ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > nodejs-12-ubuntu-16.04.. "
+# docker pull didstopia/base:nodejs-12-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:nodejs-12-ubuntu-16.04 nodejs-12-ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > steamcmd-ubuntu-16.04.. "
+# docker pull didstopia/base:steamcmd-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:steamcmd-ubuntu-16.04 steamcmd-ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > nodejs-10-steamcmd-ubuntu-16.04.. "
+# docker pull didstopia/base:nodejs-10-steamcmd-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:nodejs-10-steamcmd-ubuntu-16.04 nodejs-10-steamcmd-ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > nodejs-12-steamcmd-ubuntu-16.04.. "
+# docker pull didstopia/base:nodejs-12-steamcmd-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:nodejs-12-steamcmd-ubuntu-16.04 nodejs-12-steamcmd-ubuntu-16.04
+# echo -n "done"
+# echo ""
+# echo -n "    > ghrunner-ubuntu-16.04.. "
+# docker pull didstopia/base:ghrunner-ubuntu-16.04 > /dev/null
+# docker tag didstopia/base:ghrunner-ubuntu-16.04 ghrunner-ubuntu-16.04
+# echo -n "done"
+# echo ""
 
 # Ubuntu 18.04
 echo ""
@@ -174,52 +175,52 @@ echo -n "done"
 echo ""
 
 # Alpine 3.5
-echo ""
-echo "  * Alpine 3.5"
-echo -n "    > alpine-3.5.. "
-docker pull didstopia/base:alpine-3.5 > /dev/null
-docker tag didstopia/base:alpine-3.5 alpine-3.5
-echo -n "done"
-echo ""
-echo -n "    > static-alpine-3.5.. "
-docker pull didstopia/base:static-alpine-3.5 > /dev/null
-docker tag didstopia/base:static-alpine-3.5 static-alpine-3.5
-echo -n "done"
-echo ""
-echo -n "    > nodejs-alpine-3.5.. "
-docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
-docker tag didstopia/base:nodejs-alpine-3.5 nodejs-alpine-3.5
-echo -n "done"
-echo ""
-echo -n "    > go-alpine-3.5.. "
-docker pull didstopia/base:go-alpine-3.5 > /dev/null
-docker tag didstopia/base:go-alpine-3.5 go-alpine-3.5
-echo -n "done"
-echo ""
+# echo ""
+# echo "  * Alpine 3.5"
+# echo -n "    > alpine-3.5.. "
+# docker pull didstopia/base:alpine-3.5 > /dev/null
+# docker tag didstopia/base:alpine-3.5 alpine-3.5
+# echo -n "done"
+# echo ""
+# echo -n "    > static-alpine-3.5.. "
+# docker pull didstopia/base:static-alpine-3.5 > /dev/null
+# docker tag didstopia/base:static-alpine-3.5 static-alpine-3.5
+# echo -n "done"
+# echo ""
+# echo -n "    > nodejs-alpine-3.5.. "
+# docker pull didstopia/base:nodejs-alpine-3.5 > /dev/null
+# docker tag didstopia/base:nodejs-alpine-3.5 nodejs-alpine-3.5
+# echo -n "done"
+# echo ""
+# echo -n "    > go-alpine-3.5.. "
+# docker pull didstopia/base:go-alpine-3.5 > /dev/null
+# docker tag didstopia/base:go-alpine-3.5 go-alpine-3.5
+# echo -n "done"
+# echo ""
 
 # Alpine 3.10
-echo ""
-echo "  * Alpine 3.10"
-echo -n "    > alpine-3.10.. "
-docker pull didstopia/base:alpine-3.10 > /dev/null
-docker tag didstopia/base:alpine-3.10 alpine-3.10
-echo -n "done"
-echo ""
-echo -n "    > static-alpine-3.10.. "
-docker pull didstopia/base:static-alpine-3.10 > /dev/null
-docker tag didstopia/base:static-alpine-3.10 static-alpine-3.10
-echo -n "done"
-echo ""
-echo -n "    > nodejs-alpine-3.10.. "
-docker pull didstopia/base:nodejs-alpine-3.10 > /dev/null
-docker tag didstopia/base:nodejs-alpine-3.10 nodejs-alpine-3.10
-echo -n "done"
-echo ""
-echo -n "    > go-alpine-3.10.. "
-docker pull didstopia/base:go-alpine-3.10 > /dev/null
-docker tag didstopia/base:go-alpine-3.10 go-alpine-3.10
-echo -n "done"
-echo ""
+# echo ""
+# echo "  * Alpine 3.10"
+# echo -n "    > alpine-3.10.. "
+# docker pull didstopia/base:alpine-3.10 > /dev/null
+# docker tag didstopia/base:alpine-3.10 alpine-3.10
+# echo -n "done"
+# echo ""
+# echo -n "    > static-alpine-3.10.. "
+# docker pull didstopia/base:static-alpine-3.10 > /dev/null
+# docker tag didstopia/base:static-alpine-3.10 static-alpine-3.10
+# echo -n "done"
+# echo ""
+# echo -n "    > nodejs-alpine-3.10.. "
+# docker pull didstopia/base:nodejs-alpine-3.10 > /dev/null
+# docker tag didstopia/base:nodejs-alpine-3.10 nodejs-alpine-3.10
+# echo -n "done"
+# echo ""
+# echo -n "    > go-alpine-3.10.. "
+# docker pull didstopia/base:go-alpine-3.10 > /dev/null
+# docker tag didstopia/base:go-alpine-3.10 go-alpine-3.10
+# echo -n "done"
+# echo ""
 
 # Alpine 3.12
 echo ""
