@@ -18,6 +18,8 @@ fi
 ## FIXME: Only run this if NOT using a CI (CI does not use a credentials helper!)
 ##        NOTE: Alternatively setup a credential helper for CI?
 
+DOCKER_CONFIG_FILE="${HOME}/.docker/config.json"
+
 # Login to Docker Hub
 if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
     echo "Logging in to Docker Hub.."
@@ -26,20 +28,19 @@ if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
 fi
 
 # Ensure that the Docker configuration file exists
-if [[ ! -f "${HOME}/.docker/config.json" ]]; then
-    echo "ERROR: Docker configuration file missing from ${HOME}/.docker/config.json"
+if [[ ! -f "${DOCKER_CONFIG_FILE}/" ]]; then
+    echo "ERROR: Docker configuration file missing from ${DOCKER_CONFIG_FILE}"
     exit 1
 else
-  echo "Docker configuration file exists at ${HOME}/.docker/config.json"
+    echo "Docker configuration file exists at ${DOCKER_CONFIG_FILE}, continuing"
 fi
 
 # Create a temporary custom Docker configuration file with the credentials embedded,
 # otherwise docker-make will refuse to work correctly, as it needs permissions to push
-# mkdir ~/.docker && touch ~/.docker/config.json
-dockercfg=$(mktemp /tmp/dockercfg.XXXXX)
-if grep -q credsStore "~/.docker/config.json"; then
+if grep -q credsStore "${DOCKER_CONFIG_FILE}"; then
     echo "Customizing Docker credentials for docker-make"
-    storetype=$(jq -r .credsStore < ~/.docker/config.json)
+    DOCKER_CUSTOM_CONFIG=$(mktemp /tmp/dockercfg.XXXXX)
+    storetype=$(jq -r .credsStore < ${DOCKER_CONFIG_FILE})
     (
         echo '{'
         echo '    "auths": {'
@@ -55,9 +56,14 @@ if grep -q credsStore "~/.docker/config.json"; then
         echo '        }'
         echo '    }'
         echo '}'
-    ) > $dockercfg
+    ) > $DOCKER_CUSTOM_CONFIG
 else
     echo "Skipping Docker credentials customization for docker-make"
+fi
+
+if [ ! -z "$DOCKER_CUSTOM_CONFIG" ]; then
+    echo "Using default Docker configuration file"
+    DOCKER_CUSTOM_CONFIG="${DOCKER_CONFIG_FILE}"
 fi
 
 # Pull the latest version of docker-make
@@ -68,7 +74,7 @@ docker run \
   --rm \
   -w /usr/src/app \
   -v ~/.docker:/root/.docker \
-  -v ${dockercfg}:/root/.docker/config.json \
+  -v ${DOCKER_CUSTOM_CONFIG}:/root/.docker/config.json \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v "$(pwd)":/usr/src/app didstopia/docker-make:latest \
   docker-make -rm "$@"

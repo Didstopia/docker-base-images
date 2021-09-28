@@ -25,8 +25,8 @@ jobs:
       - name: Docker Login
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
-      - name: Print Docker Config
-        run: cat $HOME/.docker/config.json
+      # - name: Print Docker Config
+      #   run: cat $HOME/.docker/config.json
         
-      - name: Test Building
-        run: ./docker-make.sh --no-push --detailed --file .docker-make.ubuntu-18-04.yml
+      - name: Test Docker Config
+        run: ./docker-make.sh --no-push --dry-run --detailed --file .docker-make.ubuntu-18-04.yml
