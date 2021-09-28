@@ -4,11 +4,13 @@ FROM didstopia/base:alpine-edge
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
 
+## FIXME: We should use nvm instead! Let the user pick what version they want?
+
 # Install dependencies and verify that Node.js is working
 RUN apk --no-cache add \
     curl \
     nodejs \
-    nodejs-npm \
+    npm \
     jq \
     make \
     gcc \
