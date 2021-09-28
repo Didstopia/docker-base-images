@@ -28,7 +28,7 @@ if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
 fi
 
 # Ensure that the Docker configuration file exists
-if [[ ! -f "${DOCKER_CONFIG_FILE}/" ]]; then
+if [[ ! -f "${DOCKER_CONFIG_FILE}" ]]; then
     echo "ERROR: Docker configuration file missing from ${DOCKER_CONFIG_FILE}"
     exit 1
 else
