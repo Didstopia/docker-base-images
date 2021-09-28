@@ -24,7 +24,7 @@ if [[ ! -z ${GITHUB_PULL_REQUEST+x} && "${GITHUB_PULL_REQUEST}" = "false" && ! -
         git config --global user.name "GitHub Actions" > /dev/null
         echo ""
     fi
-    
+
     # Login to Docker Hub
     if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
         echo "Logging in to Docker Hub.."

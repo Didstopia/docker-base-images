@@ -27,39 +27,76 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y expect
 
-      - name: Test, Build and Deploy
+      - name: Setup the environment
+        run: |
+          export GITHUB_BRANCH=${GITHUB_REF##*/}
+          echo "GITHUB_BRANCH=${GITHUB_BRANCH}" >> $GITHUB_ENV
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
+          echo "GITHUB_PULL_REQUEST=${GITHUB_PULL_REQUEST}" >> $GITHUB_ENV
+      
+      - name: Setup the base images
+        run: .ci/setup.sh
+
+      - name: Check for base image updates
         ## FIXME: Temporary fix for GH Actions not having a TTY
         ##        https://github.com/actions/runner/issues/241#issuecomment-924327172
         shell: 'script --return --quiet --command "bash {0}"'
         run: |
-          export GITHUB_BRANCH=${GITHUB_REF##*/}
-          ## FIXME: Unnecessary, as we moved back to a single step due to Docker login persistence issues
-          # echo "GITHUB_BRANCH=${GITHUB_BRANCH}" >> $GITHUB_ENV
-
-          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
-          ## FIXME: Unnecessary, as we moved back to a single step due to Docker login persistence issues
-          # echo "GITHUB_PULL_REQUEST=${GITHUB_PULL_REQUEST}" >> $GITHUB_ENV
-
-          # Setup the base images
-          .ci/setup.sh
-
-          # Check for base image updates
           source .ci/update_check.sh
+          echo "UPDATE_UBUNTU_16_04=${UPDATE_UBUNTU_16_04}" >> $GITHUB_ENV
+          echo "UPDATE_UBUNTU_18_04=${UPDATE_UBUNTU_18_04}" >> $GITHUB_ENV
+          echo "UPDATE_UBUNTU_20_04=${UPDATE_UBUNTU_20_04}" >> $GITHUB_ENV
+          echo "UPDATE_ALPINE_3_5=${UPDATE_ALPINE_3_5}" >> $GITHUB_ENV
+          echo "UPDATE_ALPINE_3_10={UPDATE_ALPINE_3_10}" >> $GITHUB_ENV
+          echo "UPDATE_ALPINE_3_12=${UPDATE_ALPINE_3_12}" >> $GITHUB_ENV
+          echo "UPDATE_ALPINE_EDGE=${UPDATE_ALPINE_EDGE}" >> $GITHUB_ENV
 
-          ## FIXME: Unnecessary, as we moved back to a single step due to Docker login persistence issues
-          # echo "UPDATE_UBUNTU_16_04=${UPDATE_UBUNTU_16_04}" >> $GITHUB_ENV
-          # echo "UPDATE_UBUNTU_18_04=${UPDATE_UBUNTU_18_04}" >> $GITHUB_ENV
-          # echo "UPDATE_UBUNTU_20_04=${UPDATE_UBUNTU_20_04}" >> $GITHUB_ENV
-          # echo "UPDATE_ALPINE_3_5=${UPDATE_ALPINE_3_5}" >> $GITHUB_ENV
-          # echo "UPDATE_ALPINE_3_10={UPDATE_ALPINE_3_10}" >> $GITHUB_ENV
-          # echo "UPDATE_ALPINE_3_12=${UPDATE_ALPINE_3_12}" >> $GITHUB_ENV
-          # echo "UPDATE_ALPINE_EDGE=${UPDATE_ALPINE_EDGE}" >> $GITHUB_ENV
+      - name: Build the base images
+        run: .ci/build.sh
 
-          # Build the base images
-          .ci/build.sh
+      - name: Test the base images
+        ## FIXME: Temporary fix for GH Actions not having a TTY
+        ##        https://github.com/actions/runner/issues/241#issuecomment-924327172
+        shell: 'script --return --quiet --command "bash {0}"'
+        run: unbuffer .ci/test.sh
 
-          # Test the base images
-          unbuffer .ci/test.sh
+      - name: Push the base images
+        run: .ci/push.sh
 
-          # Push the base images
-          .ci/push.sh
+      ## TODO: Remove once the above is working as expected
+      # - name: Test, Build and Deploy
+      #   ## FIXME: Temporary fix for GH Actions not having a TTY
+      #   ##        https://github.com/actions/runner/issues/241#issuecomment-924327172
+      #   shell: 'script --return --quiet --command "bash {0}"'
+      #   run: |
+      #     export GITHUB_BRANCH=${GITHUB_REF##*/}
+      #     ## FIXME: Unnecessary, as we moved back to a single step due to Docker login persistence issues
+      #     # echo "GITHUB_BRANCH=${GITHUB_BRANCH}" >> $GITHUB_ENV
+
+      #     if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then export GITHUB_PULL_REQUEST=true; else export GITHUB_PULL_REQUEST=false; fi
+      #     ## FIXME: Unnecessary, as we moved back to a single step due to Docker login persistence issues
+      #     # echo "GITHUB_PULL_REQUEST=${GITHUB_PULL_REQUEST}" >> $GITHUB_ENV
+
+      #     # Setup the base images
+      #     .ci/setup.sh
+
+      #     # Check for base image updates
+      #     source .ci/update_check.sh
+
+      #     ## FIXME: Unnecessary, as we moved back to a single step due to Docker login persistence issues
+      #     # echo "UPDATE_UBUNTU_16_04=${UPDATE_UBUNTU_16_04}" >> $GITHUB_ENV
+      #     # echo "UPDATE_UBUNTU_18_04=${UPDATE_UBUNTU_18_04}" >> $GITHUB_ENV
+      #     # echo "UPDATE_UBUNTU_20_04=${UPDATE_UBUNTU_20_04}" >> $GITHUB_ENV
+      #     # echo "UPDATE_ALPINE_3_5=${UPDATE_ALPINE_3_5}" >> $GITHUB_ENV
+      #     # echo "UPDATE_ALPINE_3_10={UPDATE_ALPINE_3_10}" >> $GITHUB_ENV
+      #     # echo "UPDATE_ALPINE_3_12=${UPDATE_ALPINE_3_12}" >> $GITHUB_ENV
+      #     # echo "UPDATE_ALPINE_EDGE=${UPDATE_ALPINE_EDGE}" >> $GITHUB_ENV
+
+      #     # Build the base images
+      #     .ci/build.sh
+
+      #     # Test the base images
+      #     unbuffer .ci/test.sh
+
+      #     # Push the base images
+      #     .ci/push.sh

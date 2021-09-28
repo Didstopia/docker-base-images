@@ -1,32 +1,32 @@
-name: Test Docker
+# name: Test Docker
 
-on:
-  push:
-    branches:
-      - development
+# on:
+#   push:
+#     branches:
+#       - development
 
-jobs:
-  test:
-    name: Test Docker Config
-    runs-on: ubuntu-latest
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
+# jobs:
+#   test:
+#     name: Test Docker Config
+#     runs-on: ubuntu-latest
+#     env:
+#       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#     steps:
+#       - name: Checkout the repository
+#         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: sudo apt-get install -y expect
+#       - name: Install dependencies
+#         run: sudo apt-get install -y expect
 
-      # - name: Print Docker Config
-      #   run: cat $HOME/.docker/config.json || true
+#       # - name: Print Docker Config
+#       #   run: cat $HOME/.docker/config.json || true
 
-      - name: Docker Login
-        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+#       - name: Docker Login
+#         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
-      # - name: Print Docker Config
-      #   run: cat $HOME/.docker/config.json
+#       # - name: Print Docker Config
+#       #   run: cat $HOME/.docker/config.json
         
-      - name: Test Docker Config
-        run: ./docker-make.sh --no-push --dry-run --detailed --file .docker-make.ubuntu-18-04.yml
+#       - name: Test Docker Config
+#         run: ./docker-make.sh --no-push --dry-run --detailed --file .docker-make.ubuntu-18-04.yml

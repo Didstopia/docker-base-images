@@ -7,9 +7,6 @@ trap "rm -f $dockercfg" EXIT
 set -e
 set -o pipefail
 
-## FIXME: Remove after done testing
-set -x
-
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
@@ -62,11 +59,6 @@ else
     echo "Skipping Docker credentials customization for docker-make"
 fi
 
-# if [ ! -z "$DOCKER_CUSTOM_CONFIG" ]; then
-#     echo "Using default Docker configuration file"
-#     DOCKER_CUSTOM_CONFIG="${DOCKER_CONFIG_FILE}"
-# fi
-
 # Pull the latest version of docker-make
 docker pull didstopia/docker-make:latest
 
@@ -74,7 +66,7 @@ docker pull didstopia/docker-make:latest
 docker run \
   --rm \
   -w /usr/src/app \
-  -v ~/.docker:/root/.docker \
+  -v "${HOME}/.docker":/root/.docker \
   -v ${DOCKER_CUSTOM_CONFIG}:/root/.docker/config.json \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v "$(pwd)":/usr/src/app didstopia/docker-make:latest \
