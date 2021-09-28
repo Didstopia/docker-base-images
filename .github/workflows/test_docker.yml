@@ -1,0 +1,29 @@
+name: Test Docker
+
+on:
+  push:
+    branches:
+      - !master
+
+jobs:
+  test:
+    name: Test Docker Config
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo apt-get install -y expect
+
+      - name: Print Docker Config
+        run: cat $HOME/.docker/config.json || true
+
+      - name: Docker Login
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Print Docker Config
+        run: cat $HOME/.docker/config.json
