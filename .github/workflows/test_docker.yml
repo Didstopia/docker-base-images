@@ -39,4 +39,4 @@ jobs:
         run: |
           export UPDATE_UBUNTU_18_04=1
           ./.ci/push.sh
-          # ./docker-make.sh --detailed --file .docker-make.ubuntu-18-04.yml
+          # ./docker-make.sh --detailed --dry-run --file .docker-make.ubuntu-18-04.yml

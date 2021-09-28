@@ -7,9 +7,6 @@ trap "rm -f $dockercfg" EXIT
 set -e
 set -o pipefail
 
-## TODO: Remove when done testing
-set -x
-
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
