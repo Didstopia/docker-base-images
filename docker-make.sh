@@ -7,6 +7,9 @@ trap "rm -f $dockercfg" EXIT
 set -e
 set -o pipefail
 
+## TODO: Remove when done testing
+set -x
+
 # Switch to build directory (if available)
 if [[ ! -z "${GITHUB_WORKSPACE}" ]]; then
     cd "${GITHUB_WORKSPACE}"
@@ -17,16 +20,19 @@ fi
 
 DOCKER_CONFIG_FILE="${HOME}/.docker/config.json"
 
+## TODO: This should NOT be necessary, as we're already logging in from a previous step
 # Login to Docker Hub
-if [[ ! -z "${DOCKER_USERNAME}" && ! -z "${DOCKER_PASSWORD}" ]]; then
-    echo "Logging in to Docker Hub.."
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
-    echo ""
-fi
+# if [[ ! -z "${DOCKER_USERNAME+x}" && ! -z "${DOCKER_PASSWORD+x}" ]]; then
+#     echo "Logging in to Docker Hub.."
+#     # docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" > /dev/null
+#     sudo docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+#     echo ""
+# fi
 
 # Ensure that the Docker configuration file exists
 if [[ ! -f "${DOCKER_CONFIG_FILE}" ]]; then
     echo "ERROR: Docker configuration file missing from ${DOCKER_CONFIG_FILE}"
+    ls -lah ${HOME}
     exit 1
 else
     echo "Docker configuration file exists at ${DOCKER_CONFIG_FILE}, continuing"
