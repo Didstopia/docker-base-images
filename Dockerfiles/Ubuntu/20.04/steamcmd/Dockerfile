@@ -14,7 +14,11 @@ ENV CHOWN_DIRS "/app,/steamcmd"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         lib32gcc1 \
-        libstdc++6 && \
+        libstdc++6 \
+        libsdl2-2.0-0 \
+        libcurl4 \
+        expect \
+        tcl && \
     apt-get clean && \
     rm -rf \
         /var/lib/apt/lists/* \
