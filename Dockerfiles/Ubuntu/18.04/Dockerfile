@@ -1,5 +1,5 @@
 # Base image
-FROM ubuntu:18.04
+FROM ubuntu:impish-20211015
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
