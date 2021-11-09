@@ -17,6 +17,15 @@ usermod --non-unique --uid ${PUID} docker &> /dev/null
 # Add the user to the tty group (fixes permission issues with /dev/std* etc.)
 usermod -a -G tty docker &> /dev/null
 
+# Create steamcmd symlink if available
+if [ -f "/usr/games/steamcmd" ]; then
+  ln -sf "/usr/games/steamcmd" "/usr/local/bin/steamcmd"
+
+  # Create and/or fix permissions for a steacmd temporary directory
+  mkdir -p /tmp/dumps
+  chown -R "${PUID}":"${PGID}" /tmp/dumps
+fi
+
 ## TODO: This will only work for Ubuntu based images as is, so Alpine is not yet supported
 ## TODO: This should also disable passwordless sudo, if it's already been enabled before
 # Check if we should enable passwordless sudo
