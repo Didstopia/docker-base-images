@@ -1,5 +1,5 @@
 # Base image
-FROM alpine:3.11.12
+FROM alpine:3.13.8
 
 # Maintainer information
 LABEL maintainer="Didstopia <support@didstopia.com>"
