@@ -51,6 +51,25 @@ builds:
       - "org.label-schema.vcs-ref={fcommitid}"
       - "org.label-schema.schema-version=1.0"
 
+  nodejs-16-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/nodejs/Dockerfile
+    buildargs:
+      - NODE_VERSION=16
+    depends_on:
+      - ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:nodejs-16-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Node.js v16."
+      - "org.label-schema.version=nodejs-16-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for Node.js v16."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+
   steamcmd-ubuntu-20.04:
     context: /
     dockerfile: Dockerfiles/Ubuntu/20.04/steamcmd/Dockerfile
@@ -79,9 +98,28 @@ builds:
       - "on_branch:master=didstopia/base:nodejs-14-steamcmd-ubuntu-20.04"
     labels:
       - "org.label-schema.vendor=Didstopia"
-      - "org.label-schema.name=Base Docker image for Node.js v12 and steamcmd."
+      - "org.label-schema.name=Base Docker image for Node.js v14 and steamcmd."
       - "org.label-schema.version=nodejs-14-steamcmd-ubuntu-20.04"
-      - "org.label-schema.description=An always up to date base image for Node.js v12 and steamcmd."
+      - "org.label-schema.description=An always up to date base image for Node.js v14 and steamcmd."
+      - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
+      - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
+      - "org.label-schema.vcs-ref={fcommitid}"
+      - "org.label-schema.schema-version=1.0"
+
+  nodejs-16-steamcmd-ubuntu-20.04:
+    context: /
+    dockerfile: Dockerfiles/Ubuntu/20.04/nodejs-steamcmd/Dockerfile
+    buildargs:
+      - NODE_VERSION=16
+    depends_on:
+      - steamcmd-ubuntu-20.04
+    pushes:
+      - "on_branch:master=didstopia/base:nodejs-16-steamcmd-ubuntu-20.04"
+    labels:
+      - "org.label-schema.vendor=Didstopia"
+      - "org.label-schema.name=Base Docker image for Node.js v16 and steamcmd."
+      - "org.label-schema.version=nodejs-16-steamcmd-ubuntu-20.04"
+      - "org.label-schema.description=An always up to date base image for Node.js v16 and steamcmd."
       - "org.label-schema.url=https://github.com/Didstopia/docker-base-images"
       - "org.label-schema.vcs-url=github.com:Didstopia/docker-base-images.git"
       - "org.label-schema.vcs-ref={fcommitid}"
