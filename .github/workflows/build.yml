@@ -1,9 +1,9 @@
 name: Build
 
-# Validation gate. Builds the whole graph for amd64, loads it, runs smoke tests
-# and a vulnerability scan. Nothing is pushed here. Multi-arch builds and pushes
-# happen in publish.yml. amd64-only keeps PRs fast (the runner is amd64, so no
-# emulation) and lets us load images for testing, which multi-arch can't do.
+# Validation gate for PRs and branches. Lints, then builds the graph on native
+# runners (amd64 + arm64, no QEMU), loads each arch's images and smoke-tests
+# them, and scans with Trivy. Nothing is pushed. Reads the GHCR build cache so
+# unchanged layers are not rebuilt; never writes it (only publish.yml does).
 
 on:
   pull_request:
@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write  # upload Trivy SARIF to code scanning
 
 jobs:
   lint:
@@ -30,26 +29,56 @@ jobs:
               Dockerfiles/Alpine/Dockerfile Dockerfiles/Alpine/*/Dockerfile
 
   build:
-    name: Build and test (amd64)
-    runs-on: ubuntu-latest
+    name: Build and test (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: read          # read the GHCR build cache
+      security-events: write  # upload Trivy SARIF (amd64 leg only)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-latest
+            targets: default
+          - arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            targets: ubuntu-multiarch alpine   # steamcmd is amd64 only
     steps:
       - uses: actions/checkout@v6
-
       - uses: docker/setup-buildx-action@v4
 
-      - name: Build all targets (amd64, no push)
+      # Read-only access to the GHCR build cache. continue-on-error so PRs from
+      # forks (no package access) still build, just without cache hits.
+      - name: Log in to GHCR (cache read)
+        continue-on-error: true
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build ${{ matrix.arch }} and load
         uses: docker/bake-action@v7
         with:
           files: docker-bake.hcl
-          targets: default
+          targets: ${{ matrix.targets }}
           load: true
           set: |
-            *.platform=linux/amd64
+            *.platform=${{ matrix.platform }}
+        env:
+          # lowercase literal: GHCR refs must be lowercase and step env can't transform
+          CACHE_REPO: ghcr.io/didstopia/base-buildcache
+          CACHE_SUFFIX: -${{ matrix.arch }}
 
       - name: Smoke test
         run: ./Scripts/test/smoke.sh
 
       - name: Scan Ubuntu base (Trivy)
+        if: matrix.arch == 'amd64'
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: didstopia/base:ubuntu-24.04
@@ -60,6 +89,7 @@ jobs:
           exit-code: "0"
 
       - name: Scan Alpine base (Trivy)
+        if: matrix.arch == 'amd64'
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: didstopia/base:alpine-3.23
@@ -70,12 +100,14 @@ jobs:
           exit-code: "0"
 
       - name: Upload Ubuntu scan
+        if: matrix.arch == 'amd64'
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-ubuntu.sarif
           category: trivy-ubuntu
 
       - name: Upload Alpine scan
+        if: matrix.arch == 'amd64'
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-alpine.sarif
