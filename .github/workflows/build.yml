@@ -70,13 +70,13 @@ jobs:
           exit-code: "0"
 
       - name: Upload Ubuntu scan
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-ubuntu.sarif
           category: trivy-ubuntu
 
       - name: Upload Alpine scan
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-alpine.sarif
           category: trivy-alpine
