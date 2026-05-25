@@ -1,15 +1,16 @@
 name: Build
 
-# Validation gate for PRs and branches. Lints, then builds the graph on native
+# Validation gate for pull requests. Lints, then builds the graph on native
 # runners (amd64 + arm64, no QEMU), loads each arch's images and smoke-tests
 # them, and scans with Trivy. Nothing is pushed. Reads the GHCR build cache so
 # unchanged layers are not rebuilt; never writes it (only publish.yml does).
+#
+# Runs on pull requests only (plus manual dispatch); a plain branch push without
+# a PR does not run it, which avoids duplicate runs when a PR is open.
 
 on:
   pull_request:
     branches: [master]
-  push:
-    branches-ignore: [master]
   workflow_dispatch:
 
 permissions:
