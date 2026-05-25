@@ -12,8 +12,9 @@
 #   docker buildx bake --push               # build and push (CI sets the registries)
 #   docker buildx bake ubuntu-24-04 --set "*.platform=linux/arm64" --load
 #
-# Versions can be overridden from the environment, for example:
-#   NODE_VERSIONS='["24"]' docker buildx bake nodejs-ubuntu
+# Versions can be overridden from the environment (comma-separated), e.g.:
+#   NODE_VERSIONS=24 docker buildx bake nodejs-ubuntu
+#   UBUNTU_VERSIONS=24.04 ALPINE_VERSIONS=3.23 docker buildx bake
 
 variable "REGISTRY" {
   default = "didstopia/base"
@@ -34,16 +35,19 @@ variable "GO_VERSION" {
   default = ""
 }
 
+# Comma-separated, not HCL lists, so they can be overridden from the environment
+# (bake won't coerce a JSON-array env string into a tuple-typed variable). They
+# are split() into lists where they feed the matrices below.
 variable "UBUNTU_VERSIONS" {
-  default = ["22.04", "24.04"]
+  default = "22.04,24.04"
 }
 
 variable "ALPINE_VERSIONS" {
-  default = ["3.22", "3.23", "edge"]
+  default = "3.22,3.23,edge"
 }
 
 variable "NODE_VERSIONS" {
-  default = ["22", "24"]
+  default = "22,24"
 }
 
 # Default platforms for multi-arch targets. steamcmd targets override this to
@@ -89,7 +93,7 @@ target "_common" {
 
 target "ubuntu-base" {
   inherits   = ["_common"]
-  matrix     = { ver = UBUNTU_VERSIONS }
+  matrix     = { ver = split(",", UBUNTU_VERSIONS) }
   name       = "ubuntu-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Ubuntu/Dockerfile"
   args = {
@@ -106,7 +110,7 @@ target "ubuntu-base" {
 
 target "static-ubuntu" {
   inherits   = ["_common"]
-  matrix     = { ver = UBUNTU_VERSIONS }
+  matrix     = { ver = split(",", UBUNTU_VERSIONS) }
   name       = "static-ubuntu-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Ubuntu/static/Dockerfile"
   args       = { BASE_IMAGE = "${REGISTRY}:ubuntu-${ver}" }
@@ -121,7 +125,7 @@ target "static-ubuntu" {
 
 target "nodejs-ubuntu" {
   inherits   = ["_common"]
-  matrix     = { ver = UBUNTU_VERSIONS, node = NODE_VERSIONS }
+  matrix     = { ver = split(",", UBUNTU_VERSIONS), node = split(",", NODE_VERSIONS) }
   name       = "nodejs-${node}-ubuntu-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Ubuntu/nodejs/Dockerfile"
   args = {
@@ -139,7 +143,7 @@ target "nodejs-ubuntu" {
 
 target "steamcmd-ubuntu" {
   inherits   = ["_common"]
-  matrix     = { ver = UBUNTU_VERSIONS }
+  matrix     = { ver = split(",", UBUNTU_VERSIONS) }
   name       = "steamcmd-ubuntu-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Ubuntu/steamcmd/Dockerfile"
   args       = { BASE_IMAGE = "${REGISTRY}:ubuntu-${ver}" }
@@ -154,7 +158,7 @@ target "steamcmd-ubuntu" {
 
 target "nodejs-steamcmd-ubuntu" {
   inherits   = ["_common"]
-  matrix     = { ver = UBUNTU_VERSIONS, node = NODE_VERSIONS }
+  matrix     = { ver = split(",", UBUNTU_VERSIONS), node = split(",", NODE_VERSIONS) }
   name       = "nodejs-${node}-steamcmd-ubuntu-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Ubuntu/nodejs-steamcmd/Dockerfile"
   args = {
@@ -176,7 +180,7 @@ target "nodejs-steamcmd-ubuntu" {
 
 target "alpine-base" {
   inherits   = ["_common"]
-  matrix     = { ver = ALPINE_VERSIONS }
+  matrix     = { ver = split(",", ALPINE_VERSIONS) }
   name       = "alpine-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Alpine/Dockerfile"
   args       = { ALPINE_VERSION = ver }
@@ -190,7 +194,7 @@ target "alpine-base" {
 
 target "static-alpine" {
   inherits   = ["_common"]
-  matrix     = { ver = ALPINE_VERSIONS }
+  matrix     = { ver = split(",", ALPINE_VERSIONS) }
   name       = "static-alpine-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Alpine/static/Dockerfile"
   args       = { BASE_IMAGE = "${REGISTRY}:alpine-${ver}" }
@@ -205,7 +209,7 @@ target "static-alpine" {
 
 target "nodejs-alpine" {
   inherits   = ["_common"]
-  matrix     = { ver = ALPINE_VERSIONS }
+  matrix     = { ver = split(",", ALPINE_VERSIONS) }
   name       = "nodejs-alpine-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Alpine/nodejs/Dockerfile"
   args       = { BASE_IMAGE = "${REGISTRY}:alpine-${ver}" }
@@ -220,7 +224,7 @@ target "nodejs-alpine" {
 
 target "go-alpine" {
   inherits   = ["_common"]
-  matrix     = { ver = ALPINE_VERSIONS }
+  matrix     = { ver = split(",", ALPINE_VERSIONS) }
   name       = "go-alpine-${replace(ver, ".", "-")}"
   dockerfile = "Dockerfiles/Alpine/go/Dockerfile"
   args = {

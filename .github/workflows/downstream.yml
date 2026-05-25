@@ -3,7 +3,8 @@ name: Downstream image
 # Reusable workflow for Didstopia images that build on top of didstopia/base.
 # It rebuilds and pushes the downstream image only when its base image actually
 # changed (or when forced on a push/manual run), replacing the deprecated Docker
-# Hub autobuild. See docs/downstream.md for how to wire a downstream repo to it.
+# Hub autobuild. A downstream repo calls it from a thin caller workflow, passing
+# its image name and base image (see the inputs below).
 
 on:
   workflow_call:
