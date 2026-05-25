@@ -70,15 +70,19 @@ Versions can be overridden from the environment, for example
 
 ## Automation
 
-- **Nightly rebuild** ([publish.yml](.github/workflows/publish.yml)) rebuilds
-  every image from the upstream tags with no cache and pushes, so security
-  updates land without anyone touching the repo.
+- **Daily rebuild** ([publish.yml](.github/workflows/publish.yml)) checks the
+  upstream base image digests and rebuilds only the OS lines that actually
+  changed, so security updates land without churning every tag every night. A
+  weekly run rebuilds everything unconditionally as a backstop for package
+  updates that land before the base is re-tagged.
 - **Build gate** ([build.yml](.github/workflows/build.yml)) lints with hadolint,
   builds the full graph, runs the smoke tests and scans with Trivy on every PR.
-- **Trivy** uploads results to GitHub code scanning, so CVEs are visible without
-  reading logs.
-- **Dependabot** keeps the GitHub Actions current and watches the base images,
-  with patch/minor updates auto-merged once CI passes.
+- **Docker Scout** continuously monitors the published images for new CVEs and
+  base image drift; Trivy results also go to GitHub code scanning.
+- **Dependabot** keeps the GitHub Actions current, with patch/minor updates
+  auto-merged once CI passes.
+- **Downstream images** rebuild themselves when the base changes, via a reusable
+  workflow. See [docs/downstream.md](docs/downstream.md).
 
 See [docs/rewrite-plan.md](docs/rewrite-plan.md) for the design and
 [MIGRATION.md](MIGRATION.md) for moving downstream images onto the new tags.

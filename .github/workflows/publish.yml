@@ -1,74 +1,154 @@
 name: Publish
 
-# Builds the full multi-arch graph and pushes to Docker Hub and GHCR.
+# Builds the multi-arch graph and pushes to Docker Hub and GHCR.
 #
 # Triggers:
-#   - push to master      build and push the current state
-#   - nightly schedule    rebuild from scratch so upstream OS/package security
-#                         updates get pulled in and pushed (the "always up to
-#                         date" engine, replacing the old apt-diff update check)
-#   - manual dispatch     on demand
+#   - push to master    build and push everything (code changed)
+#   - daily schedule     rebuild only the OS lines whose upstream base image
+#                        digest actually changed since we last built, so we
+#                        don't churn digests every night for no reason
+#   - weekly schedule    unconditional full rebuild backstop, catches apt/apk
+#                        security updates that land before the base is re-tagged
+#   - manual dispatch    rebuild everything
 #
-# steamcmd targets are pinned to amd64 in docker-bake.hcl and build natively on
-# the amd64 runner. arm64 images build via QEMU emulation.
+# Each base image records the upstream base digest it was built from in the
+# org.opencontainers.image.base.digest label. The detect job reads that back
+# off the published image and compares it to the current upstream digest, so
+# the published images are the source of truth, no separate state to drift.
+#
+# Continuous CVE monitoring of already-published images is handled by Docker
+# Scout on the Docker Hub side, so there is no daily scan job here; Trivy runs
+# at PR time (build.yml) and after each publish below.
 
 on:
   push:
     branches: [master]
   schedule:
-    - cron: "0 3 * * *"  # nightly at 03:00 UTC
+    - cron: "0 3 * * *"    # daily: digest-gated rebuild
+    - cron: "0 4 * * 1"    # weekly (Mon): unconditional backstop
   workflow_dispatch:
 
 permissions:
   contents: read
 
+env:
+  REGISTRY: didstopia/base
+
 jobs:
-  build-push:
+  detect:
+    name: Detect changed base lines
+    runs-on: ubuntu-latest
+    outputs:
+      ubuntu_versions: ${{ steps.decide.outputs.ubuntu_versions }}
+      alpine_versions: ${{ steps.decide.outputs.alpine_versions }}
+      any: ${{ steps.decide.outputs.any }}
+    steps:
+      - id: decide
+        run: |
+          set -euo pipefail
+          FULL_UBUNTU='["22.04","24.04"]'
+          FULL_ALPINE='["3.22","3.23","edge"]'
+
+          full=false
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            full=true
+          elif [ "${{ github.event.schedule }}" = "0 4 * * 1" ]; then
+            full=true   # weekly backstop
+          fi
+
+          # Print a JSON array of versions whose upstream base digest differs
+          # from what our published base image was last built against.
+          changed() {
+            local up_repo="$1" our_prefix="$2"; shift 2
+            local out=()
+            for v in "$@"; do
+              local up ours
+              up=$(docker buildx imagetools inspect "${up_repo}:${v}" --format '{{.Manifest.Digest}}' 2>/dev/null || echo "")
+              ours=$(docker buildx imagetools inspect "${REGISTRY}:${our_prefix}-${v}" --format '{{json .Image}}' 2>/dev/null \
+                | jq -r 'to_entries[0].value | ((.config // .Config).Labels // {})["org.opencontainers.image.base.digest"] // ""' 2>/dev/null || echo "")
+              if [ -z "$up" ] || [ "$up" != "$ours" ]; then out+=("$v"); fi
+            done
+            if [ "${#out[@]}" -eq 0 ]; then echo "[]"; else printf '%s\n' "${out[@]}" | jq -R . | jq -cs .; fi
+          }
+
+          if [ "$full" = "true" ]; then
+            ubuntu="$FULL_UBUNTU"; alpine="$FULL_ALPINE"
+          else
+            ubuntu=$(changed ubuntu ubuntu 22.04 24.04)
+            alpine=$(changed alpine alpine 3.22 3.23 edge)
+          fi
+
+          any=false
+          if [ "$ubuntu" != "[]" ] || [ "$alpine" != "[]" ]; then any=true; fi
+
+          {
+            echo "ubuntu_versions=$ubuntu"
+            echo "alpine_versions=$alpine"
+            echo "any=$any"
+          } >> "$GITHUB_OUTPUT"
+          echo "ubuntu=$ubuntu  alpine=$alpine  any=$any"
+
+  build:
     name: Build and push
+    needs: detect
+    if: needs.detect.outputs.any == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write  # push to GHCR
+      packages: write   # push to GHCR
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Compute build metadata
-        run: |
-          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
-          echo "VERSION=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
-          echo "GHCR_REGISTRY=ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/base" >> "$GITHUB_ENV"
-
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v6
+      - uses: docker/setup-qemu-action@v4
+      - uses: docker/setup-buildx-action@v4
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push all images
-        uses: docker/bake-action@v6
-        with:
-          files: docker-bake.hcl
-          targets: default
-          push: true
-          # Nightly forces a clean rebuild so OS security updates are picked up
-          no-cache: ${{ github.event_name == 'schedule' }}
-          pull: ${{ github.event_name == 'schedule' }}
+      - name: Build and push changed lines
         env:
-          VCS_REF: ${{ github.sha }}
+          UBUNTU_LIST: ${{ needs.detect.outputs.ubuntu_versions }}
+          ALPINE_LIST: ${{ needs.detect.outputs.alpine_versions }}
+        run: |
+          set -euo pipefail
+          export REGISTRY=didstopia/base
+          export VCS_REF='${{ github.sha }}'
+          GHCR_REGISTRY="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/base"; export GHCR_REGISTRY
+          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; export BUILD_DATE
+          VERSION="$(git rev-parse --short HEAD)"; export VERSION
+
+          # Build one OS group restricted to the changed versions, stamping each
+          # base image with the upstream digest it was built from.
+          build_group() {
+            local group="$1" up_repo="$2" versions_json="$3" var="$4"
+            [ "$versions_json" = "[]" ] && { echo "no $group changes, skipping"; return; }
+            local sets=()
+            local v d tgt
+            for v in $(echo "$versions_json" | jq -r '.[]'); do
+              d=$(docker buildx imagetools inspect "${up_repo}:${v}" --format '{{.Manifest.Digest}}')
+              tgt="${group}-${v//./-}"
+              sets+=(--set "${tgt}.labels.org.opencontainers.image.base.digest=${d}")
+            done
+            echo "Building $group for versions $versions_json"
+            env "${var}=${versions_json}" docker buildx bake "$group" --push "${sets[@]}"
+          }
+
+          build_group ubuntu ubuntu "$UBUNTU_LIST" UBUNTU_VERSIONS
+          build_group alpine alpine "$ALPINE_LIST" ALPINE_VERSIONS
 
   scan:
     name: Scan published images
-    needs: build-push
+    needs: [detect, build]
+    if: needs.detect.outputs.any == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -78,21 +158,18 @@ jobs:
       matrix:
         image:
           - ubuntu-24.04
-          - ubuntu-22.04
           - alpine-3.23
           - nodejs-24-ubuntu-24.04
-          - nodejs-alpine-3.23
-          - steamcmd-ubuntu-24.04
     steps:
       - name: Trivy scan ${{ matrix.image }}
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: didstopia/base:${{ matrix.image }}
           format: sarif
           output: trivy.sarif
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"  # report, do not block the publish
+          exit-code: "0"   # report, do not block publishing
 
       - name: Upload scan results
         uses: github/codeql-action/upload-sarif@v3

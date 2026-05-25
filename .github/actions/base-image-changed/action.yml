@@ -1,0 +1,42 @@
+name: Base image changed
+description: >
+  Check whether a didstopia/base tag has changed since a downstream image last
+  built on it. Compares the current base manifest digest against the
+  org.opencontainers.image.base.digest label recorded on the downstream image.
+
+inputs:
+  image:
+    description: Downstream image ref to read the recorded base digest from (e.g. didstopia/myapp:latest)
+    required: true
+  base-image:
+    description: Base image ref the downstream builds FROM (e.g. didstopia/base:nodejs-24-ubuntu-24.04)
+    required: true
+
+outputs:
+  changed:
+    description: "true if the base digest differs from what the downstream image recorded (or the downstream image does not exist yet)"
+    value: ${{ steps.check.outputs.changed }}
+  base_digest:
+    description: The current manifest digest of the base image
+    value: ${{ steps.check.outputs.base_digest }}
+
+runs:
+  using: composite
+  steps:
+    - id: check
+      shell: bash
+      run: |
+        set -euo pipefail
+        base_digest=$(docker buildx imagetools inspect "${{ inputs.base-image }}" --format '{{.Manifest.Digest}}')
+        echo "base_digest=$base_digest" >> "$GITHUB_OUTPUT"
+
+        prev=$(docker buildx imagetools inspect "${{ inputs.image }}" --format '{{json .Image}}' 2>/dev/null \
+          | jq -r 'to_entries[0].value | ((.config // .Config).Labels // {})["org.opencontainers.image.base.digest"] // ""' 2>/dev/null || echo "")
+
+        if [ "$base_digest" != "$prev" ]; then
+          echo "Base changed: $prev -> $base_digest"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "Base unchanged ($base_digest)"
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        fi

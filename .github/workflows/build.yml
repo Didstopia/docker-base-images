@@ -21,7 +21,7 @@ jobs:
     name: Lint Dockerfiles
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Hadolint
         run: |
           docker run --rm -v "$PWD:/repo" -w /repo hadolint/hadolint:latest \
@@ -33,9 +33,9 @@ jobs:
     name: Build and test (amd64)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Build all targets (amd64, no push)
         uses: docker/bake-action@v7
