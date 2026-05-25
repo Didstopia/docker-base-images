@@ -1,0 +1,101 @@
+name: Publish
+
+# Builds the full multi-arch graph and pushes to Docker Hub and GHCR.
+#
+# Triggers:
+#   - push to master      build and push the current state
+#   - nightly schedule    rebuild from scratch so upstream OS/package security
+#                         updates get pulled in and pushed (the "always up to
+#                         date" engine, replacing the old apt-diff update check)
+#   - manual dispatch     on demand
+#
+# steamcmd targets are pinned to amd64 in docker-bake.hcl and build natively on
+# the amd64 runner. arm64 images build via QEMU emulation.
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "0 3 * * *"  # nightly at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-push:
+    name: Build and push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # push to GHCR
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute build metadata
+        run: |
+          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+          echo "VERSION=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+          echo "GHCR_REGISTRY=ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/base" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push all images
+        uses: docker/bake-action@v6
+        with:
+          files: docker-bake.hcl
+          targets: default
+          push: true
+          # Nightly forces a clean rebuild so OS security updates are picked up
+          no-cache: ${{ github.event_name == 'schedule' }}
+          pull: ${{ github.event_name == 'schedule' }}
+        env:
+          VCS_REF: ${{ github.sha }}
+
+  scan:
+    name: Scan published images
+    needs: build-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu-24.04
+          - ubuntu-22.04
+          - alpine-3.23
+          - nodejs-24-ubuntu-24.04
+          - nodejs-alpine-3.23
+          - steamcmd-ubuntu-24.04
+    steps:
+      - name: Trivy scan ${{ matrix.image }}
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: didstopia/base:${{ matrix.image }}
+          format: sarif
+          output: trivy.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "0"  # report, do not block the publish
+
+      - name: Upload scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-${{ matrix.image }}

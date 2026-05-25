@@ -1,0 +1,30 @@
+version: 2
+
+updates:
+  # Keep the GitHub Actions used in the workflows current. This is the main
+  # win: action versions drift and Dependabot bumps them automatically.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+
+  # Watch the upstream FROM in the base Dockerfiles. Note: OS security patches
+  # already flow in nightly via publish.yml rebuilding from the floating tags,
+  # so this mostly catches a new base image tag. Variant Dockerfiles are not
+  # listed because their FROM is our own didstopia/base image.
+  - package-ecosystem: "docker"
+    directories:
+      - "/Dockerfiles/Ubuntu"
+      - "/Dockerfiles/Alpine"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "build"

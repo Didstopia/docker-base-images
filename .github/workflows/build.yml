@@ -1,0 +1,82 @@
+name: Build
+
+# Validation gate. Builds the whole graph for amd64, loads it, runs smoke tests
+# and a vulnerability scan. Nothing is pushed here. Multi-arch builds and pushes
+# happen in publish.yml. amd64-only keeps PRs fast (the runner is amd64, so no
+# emulation) and lets us load images for testing, which multi-arch can't do.
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches-ignore: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write  # upload Trivy SARIF to code scanning
+
+jobs:
+  lint:
+    name: Lint Dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hadolint
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo hadolint/hadolint:latest \
+            hadolint \
+              Dockerfiles/Ubuntu/Dockerfile Dockerfiles/Ubuntu/*/Dockerfile \
+              Dockerfiles/Alpine/Dockerfile Dockerfiles/Alpine/*/Dockerfile
+
+  build:
+    name: Build and test (amd64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build all targets (amd64, no push)
+        uses: docker/bake-action@v6
+        with:
+          files: docker-bake.hcl
+          targets: default
+          load: true
+          set: |
+            *.platform=linux/amd64
+
+      - name: Smoke test
+        run: ./Scripts/test/smoke.sh
+
+      - name: Scan Ubuntu base (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: didstopia/base:ubuntu-24.04
+          format: sarif
+          output: trivy-ubuntu.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "0"
+
+      - name: Scan Alpine base (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: didstopia/base:alpine-3.23
+          format: sarif
+          output: trivy-alpine.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "0"
+
+      - name: Upload Ubuntu scan
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-ubuntu.sarif
+          category: trivy-ubuntu
+
+      - name: Upload Alpine scan
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-alpine.sarif
+          category: trivy-alpine

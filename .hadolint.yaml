@@ -1,0 +1,12 @@
+# hadolint configuration
+#
+# These images deliberately track the latest packages so nightly rebuilds pull
+# security updates, so the "pin your versions" rules are turned off on purpose.
+ignored:
+  - DL3002  # last USER root: intentional, the entrypoint drops to docker via gosu
+  - DL3008  # pin apt package versions (we want the latest)
+  - DL3018  # pin apk package versions (we want the latest)
+  - DL4006  # require pipefail (RUN blocks use set -eux and short, checked pipes)
+  - DL3047  # wget without --progress (noise)
+
+failure-threshold: warning

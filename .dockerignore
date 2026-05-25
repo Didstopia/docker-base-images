@@ -1,9 +1,12 @@
 .git/
 .git*
-.docker-make.yml
-.travis.yml
+.github/
+.vscode/
 .DS_Store
 Thumbs.db
 .env
-Dockerfiles/
 data/
+docs/
+legacy/
+Dockerfiles/
+docker-bake.hcl
