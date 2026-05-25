@@ -1,30 +1,37 @@
 version: 2
 
 updates:
-  # Keep the GitHub Actions used in the workflows current. This is the main
-  # win: action versions drift and Dependabot bumps them automatically.
+  # GitHub Actions in the workflows. "/" covers everything under
+  # .github/workflows (build, publish, downstream, dependabot-auto-merge).
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "github-actions"
     commit-message:
       prefix: "ci"
 
-  # Watch the upstream FROM in the base Dockerfiles. Note: OS security patches
-  # already flow in nightly via publish.yml rebuilding from the floating tags,
-  # so this mostly catches a new base image tag. Variant Dockerfiles are not
-  # listed because their FROM is our own didstopia/base image.
-  - package-ecosystem: "docker"
-    directories:
-      - "/Dockerfiles/Ubuntu"
-      - "/Dockerfiles/Alpine"
+  # The composite action lives in a subdirectory, which the "/" entry above does
+  # not reliably scan. It has no action dependencies today, but this keeps it
+  # covered if that changes.
+  - package-ecosystem: "github-actions"
+    directory: "/.github/actions/base-image-changed"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "docker"
+    commit-message:
+      prefix: "ci"
+
+  # Dockerfiles, base images and every variant (the globs cover both levels).
+  # FROM lines are ARG-driven, so Dependabot may not always resolve them; OS and
+  # package currency is handled by the nightly rebuild in publish.yml regardless.
+  # Our own base image is ignored so the variant Dockerfiles (which build FROM
+  # didstopia/base) do not generate self-referential PRs.
+  - package-ecosystem: "docker"
+    directories:
+      - "/Dockerfiles/*"
+      - "/Dockerfiles/*/*"
+    schedule:
+      interval: "weekly"
     commit-message:
       prefix: "build"
+    ignore:
+      - dependency-name: "didstopia/base"

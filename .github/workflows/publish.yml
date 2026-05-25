@@ -138,8 +138,10 @@ jobs:
               tgt="${group}-${v//./-}"
               sets+=(--set "${tgt}.labels.org.opencontainers.image.base.digest=${d}")
             done
-            echo "Building $group for versions $versions_json"
-            env "${var}=${versions_json}" docker buildx bake "$group" --push "${sets[@]}"
+            local csv
+            csv=$(echo "$versions_json" | jq -r 'join(",")')
+            echo "Building $group for versions $csv"
+            env "${var}=${csv}" docker buildx bake "$group" --push "${sets[@]}"
           }
 
           build_group ubuntu ubuntu "$UBUNTU_LIST" UBUNTU_VERSIONS

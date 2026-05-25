@@ -61,8 +61,8 @@ docker buildx bake ubuntu-24-04 --set "*.platform=linux/arm64" --load
 ./Scripts/test/smoke.sh
 ```
 
-Versions can be overridden from the environment, for example
-`NODE_VERSIONS='["24"]' docker buildx bake nodejs-ubuntu`.
+Versions can be overridden from the environment (comma-separated), for example
+`NODE_VERSIONS=24 docker buildx bake nodejs-ubuntu`.
 
 > SteamCMD targets are amd64 only and can't be built on an arm64 host (the
 > 32-bit binary won't run under nested emulation). Build them on amd64 or let CI
@@ -81,11 +81,9 @@ Versions can be overridden from the environment, for example
   base image drift; Trivy results also go to GitHub code scanning.
 - **Dependabot** keeps the GitHub Actions current, with patch/minor updates
   auto-merged once CI passes.
-- **Downstream images** rebuild themselves when the base changes, via a reusable
-  workflow. See [docs/downstream.md](docs/downstream.md).
-
-See [docs/rewrite-plan.md](docs/rewrite-plan.md) for the design and
-[MIGRATION.md](MIGRATION.md) for moving downstream images onto the new tags.
+- **Downstream images** rebuild themselves when the base changes, via the
+  reusable workflow at `.github/workflows/downstream.yml` and the
+  `.github/actions/base-image-changed` action.
 
 ## Licenses
 
