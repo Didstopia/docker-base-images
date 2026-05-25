@@ -316,3 +316,10 @@ group "ubuntu-multiarch" {
 group "alpine" {
   targets = ["alpine-base", "static-alpine", "nodejs-alpine", "go-alpine"]
 }
+
+# Every target that builds for all platforms, across both OSes (steamcmd is
+# amd64 only and excluded). The arm64 build/gate uses this single group, since
+# bake-action's "targets" input does not accept a space-separated list.
+group "multiarch" {
+  targets = ["ubuntu-base", "static-ubuntu", "nodejs-ubuntu", "alpine-base", "static-alpine", "nodejs-alpine", "go-alpine"]
+}
