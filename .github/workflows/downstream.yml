@@ -1,0 +1,99 @@
+name: Downstream image
+
+# Reusable workflow for Didstopia images that build on top of didstopia/base.
+# It rebuilds and pushes the downstream image only when its base image actually
+# changed (or when forced on a push/manual run), replacing the deprecated Docker
+# Hub autobuild. See docs/downstream.md for how to wire a downstream repo to it.
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: Downstream image name without a tag (e.g. didstopia/myapp)
+        required: true
+        type: string
+      base-image:
+        description: Base image ref the Dockerfile builds FROM (e.g. didstopia/base:nodejs-24-ubuntu-24.04)
+        required: true
+        type: string
+      check-tag:
+        description: Which published tag to read the recorded base digest from
+        type: string
+        default: latest
+      context:
+        type: string
+        default: "."
+      dockerfile:
+        type: string
+        default: Dockerfile
+      platforms:
+        type: string
+        default: linux/amd64,linux/arm64
+      tags:
+        description: Space or comma separated tag suffixes to push (e.g. "latest 1.2.3")
+        type: string
+        default: latest
+      build-args:
+        description: Newline separated build args (KEY=VALUE)
+        type: string
+        default: ""
+      force:
+        description: Build regardless of whether the base changed
+        type: boolean
+        default: false
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+jobs:
+  check:
+    name: Check base image
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.c.outputs.changed }}
+      base_digest: ${{ steps.c.outputs.base_digest }}
+    steps:
+      - id: c
+        uses: Didstopia/docker-base-images/.github/actions/base-image-changed@master
+        with:
+          image: ${{ inputs.image }}:${{ inputs.check-tag }}
+          base-image: ${{ inputs.base-image }}
+
+  build:
+    name: Build and push
+    needs: check
+    if: ${{ needs.check.outputs.changed == 'true' || inputs.force }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/setup-qemu-action@v4
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        run: |
+          set -euo pipefail
+          args=()
+          for t in $(echo "${{ inputs.tags }}" | tr ', ' ' '); do
+            [ -n "$t" ] && args+=(--tag "${{ inputs.image }}:${t}")
+          done
+          while IFS= read -r ba; do
+            [ -n "$ba" ] && args+=(--build-arg "$ba")
+          done <<< "${{ inputs.build-args }}"
+          docker buildx build \
+            --platform "${{ inputs.platforms }}" \
+            --file "${{ inputs.dockerfile }}" \
+            --label "org.opencontainers.image.base.name=${{ inputs.base-image }}" \
+            --label "org.opencontainers.image.base.digest=${{ needs.check.outputs.base_digest }}" \
+            --push \
+            "${args[@]}" \
+            "${{ inputs.context }}"

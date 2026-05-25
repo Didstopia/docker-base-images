@@ -17,19 +17,21 @@ usermod --non-unique --uid ${PUID} docker &> /dev/null
 # Add the user to the tty group (fixes permission issues with /dev/std* etc.)
 usermod -a -G tty docker &> /dev/null
 
-# Create steamcmd symlink if available
-if [ -f "/usr/games/steamcmd" ]; then
+# Create the steamcmd symlink and scratch dir if steamcmd is present.
+# Covers both the /steamcmd tarball install and the distro package.
+if [ -x "/steamcmd/steamcmd.sh" ]; then
+  ln -sf "/steamcmd/steamcmd.sh" "/usr/local/bin/steamcmd"
+  mkdir -p /tmp/dumps
+  chown -R "${PUID}":"${PGID}" /tmp/dumps
+elif [ -f "/usr/games/steamcmd" ]; then
   ln -sf "/usr/games/steamcmd" "/usr/local/bin/steamcmd"
-
-  # Create and/or fix permissions for a steacmd temporary directory
   mkdir -p /tmp/dumps
   chown -R "${PUID}":"${PGID}" /tmp/dumps
 fi
 
-## TODO: This will only work for Ubuntu based images as is, so Alpine is not yet supported
-## TODO: This should also disable passwordless sudo, if it's already been enabled before
-# Check if we should enable passwordless sudo
-if [ "${ENABLE_PASSWORDLESS_SUDO}" = "true" ]; then
+# Check if we should enable passwordless sudo. Only attempt this when sudo is
+# actually installed, so it stays a no-op on the slim Alpine images.
+if [ "${ENABLE_PASSWORDLESS_SUDO}" = "true" ] && command -v sudo > /dev/null && [ -f /etc/sudoers ]; then
   # Add the user to the sudo group
   if ! groups docker | grep -q "\bsudo\b"; then
     usermod -a -G sudo docker &> /dev/null
@@ -76,6 +78,5 @@ echo "
 
 "
 
-# Continue execution
-#exec gosu ${PUID}:${PGID} "$@"
+# Continue execution as the docker user
 exec gosu docker "$@"
