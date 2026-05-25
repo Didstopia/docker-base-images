@@ -70,13 +70,19 @@ Versions can be overridden from the environment (comma-separated), for example
 
 ## Automation
 
+- **Native multi-arch builds.** Each architecture builds on its own native
+  runner (amd64 on `ubuntu-latest`, arm64 on `ubuntu-24.04-arm`), then the
+  per-arch images are merged into one manifest. No QEMU emulation, which is both
+  faster and avoids the emulation segfaults. Build layers are cached in a GHCR
+  cache repo so unchanged layers are not rebuilt.
 - **Daily rebuild** ([publish.yml](.github/workflows/publish.yml)) checks the
   upstream base image digests and rebuilds only the OS lines that actually
   changed, so security updates land without churning every tag every night. A
-  weekly run rebuilds everything unconditionally as a backstop for package
-  updates that land before the base is re-tagged.
+  weekly run rebuilds everything unconditionally (no cache) as a backstop for
+  package updates that land before the base is re-tagged.
 - **Build gate** ([build.yml](.github/workflows/build.yml)) lints with hadolint,
-  builds the full graph, runs the smoke tests and scans with Trivy on every PR.
+  builds the graph on both arches, runs the smoke tests and scans with Trivy on
+  every PR.
 - **Docker Scout** continuously monitors the published images for new CVEs and
   base image drift; Trivy results also go to GitHub code scanning.
 - **Dependabot** keeps the GitHub Actions current, with patch/minor updates

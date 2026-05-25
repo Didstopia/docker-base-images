@@ -1,24 +1,23 @@
 name: Publish
 
-# Builds the multi-arch graph and pushes to Docker Hub and GHCR.
+# Builds the multi-arch graph on NATIVE runners and pushes to Docker Hub + GHCR.
+#
+# Why native runners: building arm64 under QEMU emulation on an amd64 runner is
+# slow and intermittently segfaults (qemu/ldconfig on glibc). GitHub now offers
+# free native arm64 runners for public repos, so each architecture builds on its
+# own runner with no emulation, then the per-arch images are merged into one
+# multi-arch manifest. steamcmd is amd64 only (no arm64 SteamCMD binary).
 #
 # Triggers:
-#   - push to master    build and push everything (code changed)
-#   - daily schedule     rebuild only the OS lines whose upstream base image
-#                        digest actually changed since we last built, so we
-#                        don't churn digests every night for no reason
-#   - weekly schedule    unconditional full rebuild backstop, catches apt/apk
-#                        security updates that land before the base is re-tagged
+#   - push to master    build and push everything
+#   - daily schedule     rebuild only the OS lines whose upstream base digest changed
+#   - weekly schedule    unconditional full rebuild backstop (apt/apk updates)
 #   - manual dispatch    rebuild everything
 #
-# Each base image records the upstream base digest it was built from in the
-# org.opencontainers.image.base.digest label. The detect job reads that back
-# off the published image and compares it to the current upstream digest, so
-# the published images are the source of truth, no separate state to drift.
-#
-# Continuous CVE monitoring of already-published images is handled by Docker
-# Scout on the Docker Hub side, so there is no daily scan job here; Trivy runs
-# at PR time (build.yml) and after each publish below.
+# Build-layer cache lives in a GHCR cache repo, written here and read by PR
+# builds, so unchanged layers are not rebuilt. Each base records the upstream
+# base digest it built from in org.opencontainers.image.base.digest, which the
+# detect job reads back to gate the daily rebuild.
 
 on:
   push:
@@ -89,16 +88,104 @@ jobs:
           echo "ubuntu=$ubuntu  alpine=$alpine  any=$any"
 
   build:
-    name: Build and push
+    name: Build ${{ matrix.arch }}
     needs: detect
+    if: needs.detect.outputs.any == 'true'
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write   # write build cache to GHCR
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/setup-buildx-action@v4   # docker-container driver, no QEMU
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DIDSTOPIA_DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DIDSTOPIA_DOCKERHUB_TOKEN }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build ${{ matrix.arch }} and push by digest
+        env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: ${{ matrix.platform }}
+          UBUNTU_LIST: ${{ needs.detect.outputs.ubuntu_versions }}
+          ALPINE_LIST: ${{ needs.detect.outputs.alpine_versions }}
+        run: |
+          set -euo pipefail
+          export REGISTRY=didstopia/base
+          export GHCR_REGISTRY=""   # tags are cleared for push-by-digest; GHCR tags are made in the merge job
+          GHCR_OWNER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          export CACHE_REPO="ghcr.io/${GHCR_OWNER}/base-buildcache"
+          export CACHE_WRITE=true
+          export CACHE_SUFFIX="-${ARCH}"
+          export VCS_REF='${{ github.sha }}'
+          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; export BUILD_DATE
+          VERSION="$(git rev-parse --short HEAD)"; export VERSION
+
+          # push images by digest (no tags) to Docker Hub; merge job assembles tags
+          OUT='type=image,"name='"${REGISTRY}"'",push-by-digest=true,name-canonical=true,push=true'
+
+          build_os() {
+            local group="$1" prefix="$2" up_repo="$3" versions="$4" var="$5" out="$6"
+            [ "$versions" = "[]" ] && { echo "no ${prefix} changes"; return 0; }
+            local sets=( --set "*.platform=${PLATFORM}" --set "*.tags=" --set "*.output=${OUT}" )
+            local v d
+            for v in $(echo "$versions" | jq -r '.[]'); do
+              d=$(docker buildx imagetools inspect "${up_repo}:${v}" --format '{{.Manifest.Digest}}')
+              sets+=( --set "${prefix}-${v//./-}.labels.org.opencontainers.image.base.digest=${d}" )
+            done
+            local csv; csv=$(echo "$versions" | jq -r 'join(",")')
+            echo "Building ${group} (${PLATFORM}) for ${csv}"
+            env "${var}=${csv}" docker buildx bake "$group" --metadata-file "$out" "${sets[@]}"
+          }
+
+          # amd64 builds the full Ubuntu group (incl. steamcmd); arm64 skips steamcmd
+          if [ "$ARCH" = "arm64" ]; then UB_GROUP=ubuntu-multiarch; else UB_GROUP=ubuntu; fi
+
+          echo '{}' > meta-ubuntu.json
+          echo '{}' > meta-alpine.json
+          build_os "$UB_GROUP" ubuntu ubuntu "$UBUNTU_LIST" UBUNTU_VERSIONS meta-ubuntu.json
+          build_os alpine     alpine alpine "$ALPINE_LIST" ALPINE_VERSIONS meta-alpine.json
+
+          jq -s 'add' meta-ubuntu.json meta-alpine.json > "digests-${ARCH}.json"
+          echo "=== digests-${ARCH}.json ==="; cat "digests-${ARCH}.json"
+
+      - name: Upload digests
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.arch }}
+          path: digests-${{ matrix.arch }}.json
+          retention-days: 1
+          if-no-files-found: error
+
+  merge:
+    name: Merge manifests and tag
+    needs: [detect, build]
     if: needs.detect.outputs.any == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write   # push to GHCR
+      packages: write   # mirror tags to GHCR
     steps:
       - uses: actions/checkout@v6
-      - uses: docker/setup-qemu-action@v4
       - uses: docker/setup-buildx-action@v4
 
       - name: Log in to Docker Hub
@@ -114,42 +201,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push changed lines
-        env:
-          UBUNTU_LIST: ${{ needs.detect.outputs.ubuntu_versions }}
-          ALPINE_LIST: ${{ needs.detect.outputs.alpine_versions }}
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          pattern: digests-*
+          merge-multiple: true
+          path: digests
+
+      - name: Assemble multi-arch manifests
         run: |
           set -euo pipefail
           export REGISTRY=didstopia/base
-          export VCS_REF='${{ github.sha }}'
-          GHCR_REGISTRY="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/base"; export GHCR_REGISTRY
-          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; export BUILD_DATE
-          VERSION="$(git rev-parse --short HEAD)"; export VERSION
-
-          # Build one OS group restricted to the changed versions, stamping each
-          # base image with the upstream digest it was built from.
-          build_group() {
-            local group="$1" up_repo="$2" versions_json="$3" var="$4"
-            [ "$versions_json" = "[]" ] && { echo "no $group changes, skipping"; return; }
-            local sets=()
-            local v d tgt
-            for v in $(echo "$versions_json" | jq -r '.[]'); do
-              d=$(docker buildx imagetools inspect "${up_repo}:${v}" --format '{{.Manifest.Digest}}')
-              tgt="${group}-${v//./-}"
-              sets+=(--set "${tgt}.labels.org.opencontainers.image.base.digest=${d}")
-            done
-            local csv
-            csv=$(echo "$versions_json" | jq -r 'join(",")')
-            echo "Building $group for versions $csv"
-            env "${var}=${csv}" docker buildx bake "$group" --push "${sets[@]}"
-          }
-
-          build_group ubuntu ubuntu "$UBUNTU_LIST" UBUNTU_VERSIONS
-          build_group alpine alpine "$ALPINE_LIST" ALPINE_VERSIONS
+          GHCR_OWNER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          GHCR_REGISTRY="ghcr.io/${GHCR_OWNER}/base"; export GHCR_REGISTRY
+          # Full target list with final tags (Docker Hub + GHCR). The merge script
+          # only touches targets that actually produced a digest this run.
+          docker buildx bake --print > bake-print.json
+          python3 Scripts/ci/merge-manifests.py bake-print.json digests/digests-amd64.json digests/digests-arm64.json
 
   scan:
     name: Scan published images
-    needs: [detect, build]
+    needs: [detect, merge]
     if: needs.detect.outputs.any == 'true'
     runs-on: ubuntu-latest
     permissions:

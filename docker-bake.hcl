@@ -26,6 +26,24 @@ variable "GHCR_REGISTRY" {
   default = ""
 }
 
+# Registry for the build-layer cache (e.g. ghcr.io/didstopia/base-buildcache).
+# Empty disables caching entirely. Reading cache is safe everywhere; writing it
+# is gated on CACHE_WRITE so only the publish workflow exports cache, while PR
+# builds read it but never write. See the cache_from/cache_to functions below.
+variable "CACHE_REPO" {
+  default = ""
+}
+
+variable "CACHE_WRITE" {
+  default = "false"
+}
+
+# Suffix appended to every cache ref. The native per-arch publish builds set this
+# to "-amd64" / "-arm64" so the two runners don't overwrite each other's cache.
+variable "CACHE_SUFFIX" {
+  default = ""
+}
+
 variable "GOSU_VERSION" {
   default = "1.19"
 }
@@ -73,6 +91,22 @@ function "tags" {
   result = GHCR_REGISTRY != "" ? ["${REGISTRY}:${name}", "${GHCR_REGISTRY}:${name}"] : ["${REGISTRY}:${name}"]
 }
 
+# Per-image build cache refs in CACHE_REPO. cache_from is safe to leave on
+# everywhere: a miss (or an unreachable cache) just builds cold. cache_to only
+# exports when CACHE_WRITE is "true" (set by the publish workflow), so PR builds
+# read the cache without polluting it. mode=max caches intermediate layers too,
+# which matters for the base->variant chains; oci-mediatypes + image-manifest
+# keep the cache format compatible with GHCR.
+function "cache_from" {
+  params = [name]
+  result = CACHE_REPO != "" ? ["type=registry,ref=${CACHE_REPO}:${name}${CACHE_SUFFIX}"] : []
+}
+
+function "cache_to" {
+  params = [name]
+  result = (CACHE_REPO != "" && CACHE_WRITE == "true") ? ["type=registry,ref=${CACHE_REPO}:${name}${CACHE_SUFFIX},mode=max,oci-mediatypes=true,image-manifest=true"] : []
+}
+
 target "_common" {
   context = "."
   labels = {
@@ -100,7 +134,9 @@ target "ubuntu-base" {
     UBUNTU_VERSION = ver
     GOSU_VERSION   = GOSU_VERSION
   }
-  tags      = tags("ubuntu-${ver}")
+  tags       = tags("ubuntu-${ver}")
+  cache-from = cache_from("ubuntu-${ver}")
+  cache-to   = cache_to("ubuntu-${ver}")
   platforms = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Ubuntu ${ver} base"
@@ -116,6 +152,8 @@ target "static-ubuntu" {
   args       = { BASE_IMAGE = "${REGISTRY}:ubuntu-${ver}" }
   contexts   = { "${REGISTRY}:ubuntu-${ver}" = "target:ubuntu-${replace(ver, ".", "-")}" }
   tags       = tags("static-ubuntu-${ver}")
+  cache-from = cache_from("static-ubuntu-${ver}")
+  cache-to   = cache_to("static-ubuntu-${ver}")
   platforms  = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Static hosting (nginx) on Ubuntu ${ver}"
@@ -133,7 +171,9 @@ target "nodejs-ubuntu" {
     NODE_MAJOR = node
   }
   contexts  = { "${REGISTRY}:ubuntu-${ver}" = "target:ubuntu-${replace(ver, ".", "-")}" }
-  tags      = tags("nodejs-${node}-ubuntu-${ver}")
+  tags       = tags("nodejs-${node}-ubuntu-${ver}")
+  cache-from = cache_from("nodejs-${node}-ubuntu-${ver}")
+  cache-to   = cache_to("nodejs-${node}-ubuntu-${ver}")
   platforms = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Node.js ${node} on Ubuntu ${ver}"
@@ -149,6 +189,8 @@ target "steamcmd-ubuntu" {
   args       = { BASE_IMAGE = "${REGISTRY}:ubuntu-${ver}" }
   contexts   = { "${REGISTRY}:ubuntu-${ver}" = "target:ubuntu-${replace(ver, ".", "-")}" }
   tags       = tags("steamcmd-ubuntu-${ver}")
+  cache-from = cache_from("steamcmd-ubuntu-${ver}")
+  cache-to   = cache_to("steamcmd-ubuntu-${ver}")
   platforms  = ["linux/amd64"]
   labels = {
     "org.opencontainers.image.title"       = "SteamCMD on Ubuntu ${ver}"
@@ -166,7 +208,9 @@ target "nodejs-steamcmd-ubuntu" {
     NODE_MAJOR = node
   }
   contexts  = { "${REGISTRY}:steamcmd-ubuntu-${ver}" = "target:steamcmd-ubuntu-${replace(ver, ".", "-")}" }
-  tags      = tags("nodejs-${node}-steamcmd-ubuntu-${ver}")
+  tags       = tags("nodejs-${node}-steamcmd-ubuntu-${ver}")
+  cache-from = cache_from("nodejs-${node}-steamcmd-ubuntu-${ver}")
+  cache-to   = cache_to("nodejs-${node}-steamcmd-ubuntu-${ver}")
   platforms = ["linux/amd64"]
   labels = {
     "org.opencontainers.image.title"       = "Node.js ${node} + SteamCMD on Ubuntu ${ver}"
@@ -185,6 +229,8 @@ target "alpine-base" {
   dockerfile = "Dockerfiles/Alpine/Dockerfile"
   args       = { ALPINE_VERSION = ver }
   tags       = tags("alpine-${ver}")
+  cache-from = cache_from("alpine-${ver}")
+  cache-to   = cache_to("alpine-${ver}")
   platforms  = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Alpine ${ver} base"
@@ -200,6 +246,8 @@ target "static-alpine" {
   args       = { BASE_IMAGE = "${REGISTRY}:alpine-${ver}" }
   contexts   = { "${REGISTRY}:alpine-${ver}" = "target:alpine-${replace(ver, ".", "-")}" }
   tags       = tags("static-alpine-${ver}")
+  cache-from = cache_from("static-alpine-${ver}")
+  cache-to   = cache_to("static-alpine-${ver}")
   platforms  = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Static hosting (nginx) on Alpine ${ver}"
@@ -215,6 +263,8 @@ target "nodejs-alpine" {
   args       = { BASE_IMAGE = "${REGISTRY}:alpine-${ver}" }
   contexts   = { "${REGISTRY}:alpine-${ver}" = "target:alpine-${replace(ver, ".", "-")}" }
   tags       = tags("nodejs-alpine-${ver}")
+  cache-from = cache_from("nodejs-alpine-${ver}")
+  cache-to   = cache_to("nodejs-alpine-${ver}")
   platforms  = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Node.js (distro LTS) on Alpine ${ver}"
@@ -232,7 +282,9 @@ target "go-alpine" {
     GO_VERSION = GO_VERSION
   }
   contexts  = { "${REGISTRY}:alpine-${ver}" = "target:alpine-${replace(ver, ".", "-")}" }
-  tags      = tags("go-alpine-${ver}")
+  tags       = tags("go-alpine-${ver}")
+  cache-from = cache_from("go-alpine-${ver}")
+  cache-to   = cache_to("go-alpine-${ver}")
   platforms = PLATFORMS
   labels = {
     "org.opencontainers.image.title"       = "Go on Alpine ${ver}"
@@ -253,6 +305,12 @@ group "default" {
 
 group "ubuntu" {
   targets = ["ubuntu-base", "static-ubuntu", "nodejs-ubuntu", "steamcmd-ubuntu", "nodejs-steamcmd-ubuntu"]
+}
+
+# Ubuntu targets that build for every platform (steamcmd is amd64 only and is
+# excluded). The arm64 native runner builds this group instead of "ubuntu".
+group "ubuntu-multiarch" {
+  targets = ["ubuntu-base", "static-ubuntu", "nodejs-ubuntu"]
 }
 
 group "alpine" {
