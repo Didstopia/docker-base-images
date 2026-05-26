@@ -30,8 +30,10 @@ runs:
         base_digest=$(docker buildx imagetools inspect "${{ inputs.base-image }}" --format '{{.Manifest.Digest}}')
         echo "base_digest=$base_digest" >> "$GITHUB_OUTPUT"
 
+        # buildx renders .Image as a {platform: config} map for multi-arch images
+        # but as the config object directly for single-arch ones, so handle both.
         prev=$(docker buildx imagetools inspect "${{ inputs.image }}" --format '{{json .Image}}' 2>/dev/null \
-          | jq -r 'to_entries[0].value | ((.config // .Config).Labels // {})["org.opencontainers.image.base.digest"] // ""' 2>/dev/null || echo "")
+          | jq -r '(if (has("config") or has("Config")) then . else to_entries[0].value end) | ((.config // .Config).Labels // {})["org.opencontainers.image.base.digest"] // ""' 2>/dev/null || echo "")
 
         if [ "$base_digest" != "$prev" ]; then
           echo "Base changed: $prev -> $base_digest"
