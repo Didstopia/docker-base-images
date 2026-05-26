@@ -67,6 +67,12 @@ test_steamcmd() {
   run_grep "$image -> steamcmd present" 'steamcmd.sh' --entrypoint sh "$image" -c 'ls /steamcmd/steamcmd.sh'
 }
 
+test_wine() {
+  local image="$1"
+  have "$image" || { skip "$image"; return; }
+  run_grep "$image -> wine present" '^wine-[0-9]' --entrypoint wine "$image" --version
+}
+
 test_static() {
   local image="$1" port="$2"
   have "$image" || { skip "$image"; return; }
@@ -95,6 +101,15 @@ echo "== Ubuntu SteamCMD (amd64) =="
 for v in "${UBUNTU_VERSIONS[@]}"; do
   test_steamcmd "${REGISTRY}:steamcmd-ubuntu-${v}"
   for n in "${NODE_VERSIONS[@]}"; do test_node "${REGISTRY}:nodejs-${n}-steamcmd-ubuntu-${v}" "$n"; done
+done
+
+echo "== Ubuntu Wine + SteamCMD (amd64) =="
+for v in "${UBUNTU_VERSIONS[@]}"; do
+  test_wine "${REGISTRY}:wine-steamcmd-ubuntu-${v}"
+  for n in "${NODE_VERSIONS[@]}"; do
+    test_node "${REGISTRY}:nodejs-${n}-wine-steamcmd-ubuntu-${v}" "$n"
+    test_wine "${REGISTRY}:nodejs-${n}-wine-steamcmd-ubuntu-${v}"
+  done
 done
 
 echo "== Alpine bases =="

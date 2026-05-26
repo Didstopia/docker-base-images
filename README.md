@@ -23,10 +23,15 @@ edge. Tags follow `[<variant>-]<os>-<version>`.
 | Go               | `go-alpine-3.23`                                                     | amd64, arm64   |
 | SteamCMD         | `steamcmd-ubuntu-24.04`                                              | amd64 only     |
 | Node.js + SteamCMD | `nodejs-22-steamcmd-ubuntu-24.04`                                  | amd64 only     |
+| Wine + SteamCMD  | `wine-steamcmd-ubuntu-24.04`                                         | amd64 only     |
+| Node.js + Wine + SteamCMD | `nodejs-22-wine-steamcmd-ubuntu-24.04`                     | amd64 only     |
 
 Node.js on Ubuntu comes from NodeSource and is pinned to 22 or 24. Node.js on
 Alpine is the distro's current LTS. SteamCMD is a 32-bit x86 binary with no
-arm64 build, so those two images are amd64 only.
+arm64 build, so those images are amd64 only. The Wine images add WineHQ stable,
+a headless X server and the 32-bit GL/Vulkan libraries on top of SteamCMD, for
+game servers that only ship a Windows build (Conan Exiles, The Forest, V Rising);
+they are amd64 only for the same reason.
 
 Every image runs as a non-root `docker` user (uid/gid 1000) via an entrypoint
 that remaps to `PUID`/`PGID` and drops privileges with gosu (su-exec on Alpine).

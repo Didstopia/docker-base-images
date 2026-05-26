@@ -218,6 +218,43 @@ target "nodejs-steamcmd-ubuntu" {
   }
 }
 
+target "wine-steamcmd-ubuntu" {
+  inherits   = ["_common"]
+  matrix     = { ver = split(",", UBUNTU_VERSIONS) }
+  name       = "wine-steamcmd-ubuntu-${replace(ver, ".", "-")}"
+  dockerfile = "Dockerfiles/Ubuntu/wine-steamcmd/Dockerfile"
+  args       = { BASE_IMAGE = "${REGISTRY}:steamcmd-ubuntu-${ver}" }
+  contexts   = { "${REGISTRY}:steamcmd-ubuntu-${ver}" = "target:steamcmd-ubuntu-${replace(ver, ".", "-")}" }
+  tags       = tags("wine-steamcmd-ubuntu-${ver}")
+  cache-from = cache_from("wine-steamcmd-ubuntu-${ver}")
+  cache-to   = cache_to("wine-steamcmd-ubuntu-${ver}")
+  platforms  = ["linux/amd64"]
+  labels = {
+    "org.opencontainers.image.title"       = "Wine + SteamCMD on Ubuntu ${ver}"
+    "org.opencontainers.image.description" = "Wine and SteamCMD base image for Windows game servers on Ubuntu ${ver} (amd64 only)"
+  }
+}
+
+target "nodejs-wine-steamcmd-ubuntu" {
+  inherits   = ["_common"]
+  matrix     = { ver = split(",", UBUNTU_VERSIONS), node = split(",", NODE_VERSIONS) }
+  name       = "nodejs-${node}-wine-steamcmd-ubuntu-${replace(ver, ".", "-")}"
+  dockerfile = "Dockerfiles/Ubuntu/nodejs-steamcmd/Dockerfile"
+  args = {
+    BASE_IMAGE = "${REGISTRY}:wine-steamcmd-ubuntu-${ver}"
+    NODE_MAJOR = node
+  }
+  contexts  = { "${REGISTRY}:wine-steamcmd-ubuntu-${ver}" = "target:wine-steamcmd-ubuntu-${replace(ver, ".", "-")}" }
+  tags       = tags("nodejs-${node}-wine-steamcmd-ubuntu-${ver}")
+  cache-from = cache_from("nodejs-${node}-wine-steamcmd-ubuntu-${ver}")
+  cache-to   = cache_to("nodejs-${node}-wine-steamcmd-ubuntu-${ver}")
+  platforms = ["linux/amd64"]
+  labels = {
+    "org.opencontainers.image.title"       = "Node.js ${node} + Wine + SteamCMD on Ubuntu ${ver}"
+    "org.opencontainers.image.description" = "Node.js ${node}, Wine and SteamCMD base image on Ubuntu ${ver} (amd64 only)"
+  }
+}
+
 # ----------------------------------------------------------------------------
 # Alpine
 # ----------------------------------------------------------------------------
@@ -299,12 +336,13 @@ target "go-alpine" {
 group "default" {
   targets = [
     "ubuntu-base", "static-ubuntu", "nodejs-ubuntu", "steamcmd-ubuntu", "nodejs-steamcmd-ubuntu",
+    "wine-steamcmd-ubuntu", "nodejs-wine-steamcmd-ubuntu",
     "alpine-base", "static-alpine", "nodejs-alpine", "go-alpine",
   ]
 }
 
 group "ubuntu" {
-  targets = ["ubuntu-base", "static-ubuntu", "nodejs-ubuntu", "steamcmd-ubuntu", "nodejs-steamcmd-ubuntu"]
+  targets = ["ubuntu-base", "static-ubuntu", "nodejs-ubuntu", "steamcmd-ubuntu", "nodejs-steamcmd-ubuntu", "wine-steamcmd-ubuntu", "nodejs-wine-steamcmd-ubuntu"]
 }
 
 # Ubuntu targets that build for every platform (steamcmd is amd64 only and is
