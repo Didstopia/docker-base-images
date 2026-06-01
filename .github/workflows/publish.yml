@@ -169,7 +169,7 @@ jobs:
           echo "=== digests-${ARCH}.json ==="; cat "digests-${ARCH}.json"
 
       - name: Upload digests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.arch }}
           path: digests-${{ matrix.arch }}.json
